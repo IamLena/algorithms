@@ -7,11 +7,11 @@ const handleFile = (e) => {
             console.log('loaded')
             const allText = reader.result
             try {
-                const values = processData(allText)
-                const xValues = values.x
-                const yValues = values.y
-                console.log(values.x)
-                console.log(values.y)
+                let values = processData(allText)
+                let xValues = values.x
+                let yValues = values.y
+                console.log(xValues)
+                console.log(yValues)
                 document.querySelector('#input').style.display = 'block'
                 document.querySelector('form').addEventListener('submit', (e) => {
                     e.preventDefault()
@@ -26,7 +26,12 @@ const handleFile = (e) => {
                         console.log(`x = ${x},  n = ${n}`)
                         const index = findXIndex(x, xValues)
                         console.log(`index = ${index}`)
-                        
+                        values = getRange(n, xValues, yValues, index)
+                        xValues = values.x
+                        yValues = values.y
+                        console.log(xValues)
+                        console.log(yValues)
+
                     }
                     catch (e) {
                         alert(e.message)
@@ -100,4 +105,31 @@ const findXIndex = (x, xValues) => {
     console.log('extrapolation')
     return length
     //extrapolation is just by printing it
+}
+
+// getting the configuration aroud x for solving
+const getRange = (n, xValues, yValues, index) => {
+    const rangeLength = n + 1
+    console.log(rangeLength)
+    //the first n+1 values
+    if (index <= (rangeLength) / 2) {
+        return {
+            x: xValues.slice(0, rangeLength),
+            y: yValues.slice(0, rangeLength)
+        }
+    }
+    // the n+1 values from the end
+    if (index >= xValues.length - rangeLength) {
+        return {
+            x: xValues.slice(-rangeLength),
+            y: yValues.slice(-rangeLength)
+        }
+    }
+    // a slice in the middle
+    const indexFrom = index - Math.ceil(rangeLength/ 2)
+    const indexTo = index + Math.floor(rangeLength / 2)
+    return {
+        x: xValues.slice(indexFrom, indexTo),
+        y: yValues.slice(indexFrom, indexTo)
+    }
 }
