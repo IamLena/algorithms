@@ -20,8 +20,8 @@ function processData(allText) {
   const elements = allText.split('\n')
   elements.forEach((item) => {
     item = item.split(',')
-    xValues.push(item[0])
-    yValues.push(item[1])
+    xValues.push(parseFloat(item[0]))
+    yValues.push(parseFloat(item[1]))
   })
 }
 
@@ -39,6 +39,10 @@ const validInput = () => {
   // N - should be natural !! now it floors
   if (isNaN(x) || isNaN(n)) {
     console.log('not a number')
+    return -1
+  }
+  if (n < 0) {
+    console.log('n should be not negative')
     return -1
   }
   //convert strings to numbers
