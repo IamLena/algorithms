@@ -31,7 +31,7 @@ const handleFile = (e) => {
                         yValues = values.y
                         console.log(xValues)
                         console.log(yValues)
-
+                        calc(xValues, yValues)
                     }
                     catch (e) {
                         alert(e.message)
@@ -132,4 +132,20 @@ const getRange = (n, xValues, yValues, index) => {
         x: xValues.slice(indexFrom, indexTo),
         y: yValues.slice(indexFrom, indexTo)
     }
+}
+
+const calc = (xValues, yValues) => {
+    const koefs = []
+    koefs.push(yValues[0])
+    let len = 2
+    for (let j = xValues.length - 1; j > 0; j--)
+    {
+        for (let i = 0; i < j; i++) {
+            yValues[i] = (yValues[i] - yValues[i + 1]) / (xValues[i] - xValues[i + len - 1])
+        }
+        koefs.push(yValues[0])
+        len ++
+    }
+    console.log(koefs)
+    console.log(yValues)
 }
