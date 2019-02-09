@@ -6,9 +6,15 @@ const handleFile = (e) => {
         reader.onloadend = () => {
             console.log('loaded')
             const allText = reader.result
-            const values = processData(allText)
-            console.log(values.x)
-            console.log(values.y)
+            try {
+                const values = processData(allText)
+                console.log(values.x)
+                console.log(values.y)
+            }
+            catch (e) {
+                alert(e.message)
+            }
+            
         }
     }
     else {
@@ -24,9 +30,10 @@ function processData(allText) {
     elements.forEach((item) => {
       item = item.split(',')
       const x = item[0]
-    //   if (x.isNan()) {
-    //       return
-    //   }
+      const y = item[1]
+      if (isNaN(x) || isNaN(y)) {
+          throw Error ('Invalid file data')
+      }
       xValues.push(parseFloat(item[0]))
       yValues.push(parseFloat(item[1]))
     })
