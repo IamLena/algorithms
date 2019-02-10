@@ -27,14 +27,14 @@ const handleFile = (e) => {
                         const index = findXIndex(x, xValues)
                         console.log(`index = ${index}`)
                         values = getRange(n, xValues, yValues, index)
-                        xValues = values.x
-                        yValues = values.y
-                        console.log(xValues)
-                        console.log(yValues)
-                        const koefs = getKoefs(xValues, yValues)
+                        const xRange = values.x
+                        let yRange = values.y
+                        console.log(xRange)
+                        console.log(yRange)
+                        const koefs = getKoefs(xRange, yRange)
                         console.log('koefs')
                         console.log(koefs)
-                        calculate(x, koefs, xValues)
+                        calculate(x, koefs, xRange)
                     }
                     catch (e) {
                         alert(e.message)
