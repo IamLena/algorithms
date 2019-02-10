@@ -6,50 +6,54 @@ const handleFile = (e) => {
         reader.onloadend = () => {
             console.log('loaded')
             const allText = reader.result
-            try {
-                let values = processData(allText)
-                let xValues = values.x
-                let yValues = values.y
-                console.log(xValues)
-                console.log(yValues)
-                draw(xValues, yValues)
-                document.querySelector('#input').style.display = 'block'
-                document.querySelector('form').addEventListener('submit', (e) => {
-                    e.preventDefault()
-                    x = e.target.elements.x.value
-                    n = e.target.elements.n.value
-                    e.target.elements.x.value = ''
-                    e.target.elements.n.value = ''
-                    try {
-                        xn = validInput(x, n)
-                        x = xn.x
-                        n = xn.n
-                        console.log(`x = ${x},  n = ${n}`)
-                        const index = findXIndex(x, xValues)
-                        console.log(`index = ${index}`)
-                        values = getRange(n, xValues, yValues, index)
-                        const xRange = values.x
-                        let yRange = values.y
-                        console.log(xRange)
-                        console.log(yRange)
-                        const koefs = getKoefs(xRange, yRange)
-                        console.log('koefs')
-                        console.log(koefs)
-                        calculate(x, koefs, xRange)
-                        //drawByFunc(xValues, calculate(), koefs, xRange)
-                    }
-                    catch (e) {
-                        alert(e.message)
-                    }
-                })
-            }
-            catch (e) {
-                alert(e.message)
-            }
+            mainProcess(allText);
         }
     }
     else {
         console.log('filereader is not supported')
+    }
+}
+
+function mainProcess(allText) {
+    try {
+        let values = processData(allText);
+        let xValues = values.x;
+        let yValues = values.y;
+        console.log(xValues);
+        console.log(yValues);
+        draw(xValues, yValues);
+        document.querySelector('#input').style.display = 'block';
+        document.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            x = e.target.elements.x.value;
+            n = e.target.elements.n.value;
+            e.target.elements.x.value = '';
+            e.target.elements.n.value = '';
+            try {
+                xn = validInput(x, n);
+                x = xn.x;
+                n = xn.n;
+                console.log(`x = ${x},  n = ${n}`);
+                const index = findXIndex(x, xValues);
+                console.log(`index = ${index}`);
+                values = getRange(n, xValues, yValues, index);
+                const xRange = values.x;
+                let yRange = values.y;
+                console.log(xRange);
+                console.log(yRange);
+                const koefs = getKoefs(xRange, yRange);
+                console.log('koefs');
+                console.log(koefs);
+                calculate(x, koefs, xRange);
+                //drawByFunc(xValues, calculate(), koefs, xRange)
+            }
+            catch (e) {
+                alert(e.message);
+            }
+        });
+    }
+    catch (e) {
+        alert(e.message);
     }
 }
 
@@ -184,9 +188,6 @@ const draw = (xValues, yValues) => {
   
       ctx.beginPath();
       ctx.strokeStyle = 'blue'
-    //   ctx.moveTo (5, 5)
-    //   ctx.lineTo(100,100)
-    //   ctx.stroke();
       ctx.moveTo(scale(xValues[0]), scale(yValues[0]))
       for (let i = 1; i < xValues.length; i++) {
         ctx.lineTo(scale(xValues[i]), scale(yValues[i]))
