@@ -3,8 +3,16 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"> </script> 
+        <script>
+            $.ajax("https://docs.google.com/spreadsheets/d/e/2PACX-1vRuj-TBTqxwto7O1Awv3YK2mwhkdfu4fqWQJWyhBP-TKWRKVlVO7MGz55QufZdzV8QfSW9A4FYx5FXy/pub?gid=0&single=true&output=csv").done(function(result){
+                document.getElementById('output').innerHTML = result;
+            });
+    
+        </script>
     </head>
     <body>
+            Number of respondents: <div id="output"> </div>
         <h1>Аппроксимация функции</h1>
         <script src = "file.js"></script>
         <input type="file" onchange="handleFile(event)">
