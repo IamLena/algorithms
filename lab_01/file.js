@@ -34,7 +34,7 @@ const handleFile = (e) => {
                         const koefs = getKoefs(xValues, yValues)
                         console.log('koefs')
                         console.log(koefs)
-
+                        calculate(x, koefs, xValues)
                     }
                     catch (e) {
                         alert(e.message)
@@ -150,4 +150,22 @@ const getKoefs = (xValues, yValues) => {
         len ++
     }
     return koefs
+}
+
+const calculate = (x, koefs, xValues) => {
+    const length = koefs.length
+    let n = 0
+    let y = 0
+    for (let i = 0; i < length; i++) {
+        let mult = 1
+        for (let j = 0; j < n; j++) {
+            mult *= (x - xValues[j])
+        }
+        n ++
+        console.log(`+y = ${koefs[i]} * ${mult} = ${koefs[i] * mult}`)
+        y += (koefs[i] * mult)
+    }
+    
+    console.log(`y(${x}) = ${y}`)
+    return y
 }
