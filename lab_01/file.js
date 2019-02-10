@@ -8,8 +8,7 @@ const handleFile = (e) => {
             const allText = reader.result
             mainProcess(allText);
         }
-    }
-    else {
+    } else {
         console.log('filereader is not supported')
     }
 }
@@ -45,15 +44,15 @@ function mainProcess(allText) {
                 console.log('koefs');
                 console.log(koefs);
                 calculate(x, koefs, xRange);
-                //drawByFunc(xValues, calculate(), koefs, xRange)
-            }
-            catch (e) {
-                alert(e.message);
+                drawByFunc(xValues, calculate, koefs, xRange)
+            } catch (e) {
+                console.log(e)
+                //alert(e.message);
             }
         });
-    }
-    catch (e) {
-        alert(e.message);
+    } catch (e) {
+        console.log(e)
+        //alert(e.message);
     }
 }
 
@@ -63,52 +62,58 @@ function processData(allText) {
     const elements = allText.split('\n')
     elements.sort()
     elements.forEach((item) => {
-      item = item.split(',')
-      const x = item[0]
-      const y = item[1]
-      if (isNaN(x) || isNaN(y)) {
-          throw Error ('Invalid file data')
-      }
-      xValues.push(parseFloat(item[0]))
-      yValues.push(parseFloat(item[1]))
+        item = item.split(',')
+        const x = item[0]
+        const y = item[1]
+        if (isNaN(x) || isNaN(y)) {
+            throw Error('Invalid file data')
+        }
+        xValues.push(parseFloat(item[0]))
+        yValues.push(parseFloat(item[1]))
     })
-    return {x: xValues, y: yValues}
-  }
+    return {
+        x: xValues,
+        y: yValues
+    }
+}
 
 const validInput = (x, n) => {
     // N - should be natural !! now it floors
     if (isNaN(x) || isNaN(n)) {
         console.log('not a number')
-        throw Error (`Invalid input`)
+        throw Error(`Invalid input`)
     }
     if (n < 0) {
         console.log('n should be not negative')
-        throw Error ('power should be not negative')
+        throw Error('power should be not negative')
     }
     //convert strings to numbers
     x = parseFloat(x)
     n = parseInt(n)
-    return {x: x, n: n}
+    return {
+        x: x,
+        n: n
+    }
 }
 
 const findXIndex = (x, xValues) => {
     const length = xValues.length
     // less than any value
-    if (x < xValues[0]) { 
-      console.log('extrapolation')
-      //returning first index - 1 = -1
-      return -1
+    if (x < xValues[0]) {
+        console.log('extrapolation')
+        //returning first index - 1 = -1
+        return -1
     }
     // finding A[i] <= x <= A[i+1]
     // if success result is A[i]
     for (let i = 0; i < length - 1; i++) {
-      if (xValues[i] <= x && x < xValues[i + 1]) {
-        return i
-      }
+        if (xValues[i] <= x && x < xValues[i + 1]) {
+            return i
+        }
     }
     //if it is the last value
     if (x === xValues[length - 1]) {
-      return length - 1
+        return length - 1
     }
     // else x is greater than any value, returning last index + 1
     console.log('extrapolation')
@@ -135,7 +140,7 @@ const getRange = (n, xValues, yValues, index) => {
         }
     }
     // a slice in the middle
-    const indexFrom = index - Math.ceil(rangeLength/ 2)
+    const indexFrom = index - Math.ceil(rangeLength / 2)
     const indexTo = index + Math.floor(rangeLength / 2)
     return {
         x: xValues.slice(indexFrom, indexTo),
@@ -147,13 +152,12 @@ const getKoefs = (xValues, yValues) => {
     const koefs = []
     koefs.push(yValues[0])
     let len = 2
-    for (let j = xValues.length - 1; j > 0; j--)
-    {
+    for (let j = xValues.length - 1; j > 0; j--) {
         for (let i = 0; i < j; i++) {
             yValues[i] = (yValues[i] - yValues[i + 1]) / (xValues[i] - xValues[i + len - 1])
         }
         koefs.push(yValues[0])
-        len ++
+        len++
     }
     return koefs
 }
@@ -167,11 +171,11 @@ const calculate = (x, koefs, xValues) => {
         for (let j = 0; j < n; j++) {
             mult *= (x - xValues[j])
         }
-        n ++
+        n++
         console.log(`+y = ${koefs[i]} * ${mult} = ${koefs[i] * mult}`)
         y += (koefs[i] * mult)
     }
-    
+
     console.log(`y(${x}) = ${y}`)
     return y
 }
@@ -184,15 +188,15 @@ const draw = (xValues, yValues) => {
     console.log('drawing')
     var canvas = document.querySelector('#Graph')
     if (canvas.getContext) {
-      var ctx = canvas.getContext('2d')
-  
-      ctx.beginPath();
-      ctx.strokeStyle = 'blue'
-      ctx.moveTo(scale(xValues[0]), scale(yValues[0]))
-      for (let i = 1; i < xValues.length; i++) {
-        ctx.lineTo(scale(xValues[i]), scale(yValues[i]))
-        ctx.stroke()
-      }
+        var ctx = canvas.getContext('2d')
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'blue'
+        ctx.moveTo(scale(xValues[0]), 500-scale(yValues[0]))
+        for (let i = 1; i < xValues.length; i++) {
+            ctx.lineTo(scale(xValues[i]), 500-scale(yValues[i]))
+            ctx.stroke()
+        }
     }
 }
 
@@ -200,14 +204,14 @@ const drawByFunc = (xValues, f, koefs, xRange) => {
     console.log('drawing')
     var canvas = document.querySelector('#Graph')
     if (canvas.getContext) {
-      var ctx = canvas.getContext('2d')
-  
-      ctx.beginPath();
-      ctx.strokeStyle = 'red'
-      ctx.moveTo(scale(xValues[0]), scale(f(xValues[0], koefs, xRange)))
-      for (let i = 1; i < xValues.length; i++) {
-        ctx.lineTo(scale(xValues[i]), scale(f(xValues[i], koefs, xRange)))
-        ctx.stroke()
-      }
+        var ctx = canvas.getContext('2d')
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'red'
+        ctx.moveTo(scale(xValues[0]), 500-scale(f(xValues[0], koefs, xRange)))
+        for (let i = 1; i < xValues.length; i++) {
+            ctx.lineTo(scale(xValues[i]), 500-scale(f(xValues[i], koefs, xRange)))
+            ctx.stroke()
+        }
     }
 }
