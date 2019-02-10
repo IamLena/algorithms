@@ -12,6 +12,7 @@ const handleFile = (e) => {
                 let yValues = values.y
                 console.log(xValues)
                 console.log(yValues)
+                draw(xValues, yValues)
                 document.querySelector('#input').style.display = 'block'
                 document.querySelector('form').addEventListener('submit', (e) => {
                     e.preventDefault()
@@ -35,6 +36,7 @@ const handleFile = (e) => {
                         console.log('koefs')
                         console.log(koefs)
                         calculate(x, koefs, xRange)
+                        //drawByFunc(xValues, calculate(), koefs, xRange)
                     }
                     catch (e) {
                         alert(e.message)
@@ -168,4 +170,43 @@ const calculate = (x, koefs, xValues) => {
     
     console.log(`y(${x}) = ${y}`)
     return y
+}
+
+const scale = (x) => {
+    return 30 * x + 50
+}
+
+const draw = (xValues, yValues) => {
+    console.log('drawing')
+    var canvas = document.querySelector('#Graph')
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d')
+  
+      ctx.beginPath();
+      ctx.strokeStyle = 'blue'
+    //   ctx.moveTo (5, 5)
+    //   ctx.lineTo(100,100)
+    //   ctx.stroke();
+      ctx.moveTo(scale(xValues[0]), scale(yValues[0]))
+      for (let i = 1; i < xValues.length; i++) {
+        ctx.lineTo(scale(xValues[i]), scale(yValues[i]))
+        ctx.stroke()
+      }
+    }
+}
+
+const drawByFunc = (xValues, f, koefs, xRange) => {
+    console.log('drawing')
+    var canvas = document.querySelector('#Graph')
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d')
+  
+      ctx.beginPath();
+      ctx.strokeStyle = 'red'
+      ctx.moveTo(scale(xValues[0]), scale(f(xValues[0], koefs, xRange)))
+      for (let i = 1; i < xValues.length; i++) {
+        ctx.lineTo(scale(xValues[i]), scale(f(xValues[i], koefs, xRange)))
+        ctx.stroke()
+      }
+    }
 }
