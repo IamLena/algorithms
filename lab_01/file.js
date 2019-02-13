@@ -6,6 +6,7 @@ const handleFile = (e) => {
         reader.onloadend = () => {
             console.log('loaded')
             const allText = reader.result
+            clearCanvas()
             mainProcess(allText);
         }
     } else {
@@ -43,7 +44,8 @@ function mainProcess(allText) {
                 const koefs = getKoefs(xRange, yRange);
                 console.log('koefs');
                 console.log(koefs);
-                calculate(x, koefs, xRange);
+                const y = calculate(x, koefs, xRange);
+                printy(x, y)
                 drawByFunc(xValues, calculate, koefs, xRange)
             } catch (e) {
                 console.log(e)
@@ -54,6 +56,11 @@ function mainProcess(allText) {
         console.log(e)
         //alert(e.message);
     }
+}
+
+const printy = (x, y) => {
+    const output = `f(${x}) = ${y}`
+    document.querySelector('#output').textContent = output
 }
 
 function processData(allText) {
@@ -181,7 +188,7 @@ const calculate = (x, koefs, xValues) => {
 }
 
 const scale = (x) => {
-    return 30 * x + 50
+    return 5* x + 220
 }
 
 const draw = (xValues, yValues) => {
@@ -202,7 +209,7 @@ const draw = (xValues, yValues) => {
 
 const drawByFunc = (xValues, f, koefs, xRange) => {
     console.log('drawing')
-    var canvas = document.querySelector('#Graph')
+    const canvas = document.querySelector('#Graph')
     if (canvas.getContext) {
         var ctx = canvas.getContext('2d')
 
@@ -213,5 +220,13 @@ const drawByFunc = (xValues, f, koefs, xRange) => {
             ctx.lineTo(scale(xValues[i]), 500-scale(f(xValues[i], koefs, xRange)))
             ctx.stroke()
         }
+    }
+}
+
+const clearCanvas = () => {
+    const canvas = document.querySelector('#Graph')
+    if (canvas.getContext) {
+        const ctx = canvas.getContext('2d')
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
 }

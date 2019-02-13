@@ -6,15 +6,23 @@
         <script src = "file.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"> </script> 
         <script>
-            $.ajax("https://docs.google.com/spreadsheets/d/e/2PACX-1vRuj-TBTqxwto7O1Awv3YK2mwhkdfu4fqWQJWyhBP-TKWRKVlVO7MGz55QufZdzV8QfSW9A4FYx5FXy/pub?gid=0&single=true&output=csv").done(function(result){
-                // document.getElementById('output').innerHTML = result;
-                mainProcess(result)
+            $.ajax("https://docs.google.com/spreadsheets/d/e/2PACX-1vTk300vPQUdx1iJLnkvU9xYEpYSD38ZWjyJ-DaN-GVy1klD2_CHddIahcpVLvVimFL-b2TrdRFeSOpc/pub?gid=0&single=true&output=csv").done(function(result){
+                //mainProcess(result)
             });
-    
         </script>
+        <style>
+            input {
+                margin: 5px;
+            }
+            canvas {
+                margin: 5px;
+            }
+            #output {
+                margin: 5px;
+            }
+        </style>
     </head>
     <body>
-            Number of respondents: <div id="output"> </div>
         <h1>Аппроксимация функции</h1>
         
         <input type="file" onchange="handleFile(event)">
@@ -25,13 +33,14 @@
                 <input placeholder = "input x" name="x">
                 <input placeholder ="input n" name="n">
                 <button>submit</button>
-            </form>
-            
+            </form> 
         </div>
-        <p>canvas</p>
+        <div id="output"></div>
         <canvas id="Graph" height="500px" width="500px" style="border: 2px solid black"></canvas>
-        
-        <!-- <script src = "https://code.jquery.com/jquery-1.9.1.min.js"></script>
-        <script src = "input.js"></script> -->
+        <div class="root">
+            <button class="root">Find root</button>
+            <p class="root"></p>
+        </div>
+        <script src="root.js"></script>
     </body>
 </html>
