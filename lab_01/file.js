@@ -22,6 +22,13 @@ function mainProcess(allText) {
         console.log(xValues);
         console.log(yValues);
         draw(xValues, yValues);
+        document.querySelector('button.root').addEventListener('click', (e) => {
+            console.log('click')
+            const x = findRoot(yValues, xValues)
+            const answer = `~f(${x}) = 0`
+            console.log(answer)
+            document.querySelector('p.root').textContent = answer
+        })
         document.querySelector('#input').style.display = 'block';
         document.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -29,6 +36,7 @@ function mainProcess(allText) {
             n = e.target.elements.n.value;
             e.target.elements.x.value = '';
             e.target.elements.n.value = '';
+            
             try {
                 xn = validInput(x, n);
                 x = xn.x;
@@ -47,6 +55,8 @@ function mainProcess(allText) {
                 const y = calculate(x, koefs, xRange);
                 printy(x, y)
                 drawByFunc(xValues, calculate, koefs, xRange)
+                
+  
             } catch (e) {
                 console.log(e)
                 //alert(e.message);
@@ -56,6 +66,16 @@ function mainProcess(allText) {
         console.log(e)
         //alert(e.message);
     }
+}
+
+const findRoot = (xValues, yValues) => {
+
+    console.log(xValues, yValues)
+    koefs = getKoefs(xValues, yValues)
+    return calculate(0, koefs, xValues)
+
+    // console.log('finding root')
+    // return 1
 }
 
 const printy = (x, y) => {
@@ -179,7 +199,7 @@ const calculate = (x, koefs, xValues) => {
             mult *= (x - xValues[j])
         }
         n++
-        console.log(`+y = ${koefs[i]} * ${mult} = ${koefs[i] * mult}`)
+        //console.log(`+y = ${koefs[i]} * ${mult} = ${koefs[i] * mult}`)
         y += (koefs[i] * mult)
     }
 
