@@ -1,0 +1,72 @@
+.grid-contener {
+    display: grid;
+    grid-template-columns: 50% 50%
+}
+
+.column-noe {
+    grid-column: 1;
+}
+.column-two {
+    grid-column: 2;
+}
+
+body {
+    font-family: Georgia, serif;
+}
+input {
+    margin: 5px;
+}
+#output {
+    margin: 5px;
+}
+
+.input-file-container {
+    position: relative;
+    width: 225;
+    text-align: center;
+}
+
+.input-file-trigger {
+    display: block;
+    padding: 14px 45px;
+    background: rgb(50, 124, 184);
+    color: #fff;
+    font-size: 1em;
+    transition: all .4s;
+    cursor: pointer;
+}
+
+.input-file {
+    position: absolute;
+    top: 0; left: 0;
+    width: 225px;
+    opacity: 0;
+    padding: 14px 0;
+    cursor: pointer;
+}
+
+.file-return {
+    margin: 0;
+    font-size: 10pt;
+}
+
+form {
+    margin: 0 auto;
+    text-align: center;
+}
+
+form#file{
+    width: 225px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1, h3 {
+    text-align: center;
+}
+
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+}

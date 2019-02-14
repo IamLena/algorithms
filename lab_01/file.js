@@ -1,5 +1,7 @@
 const handleFile = (e) => {
+    //document.querySelector('.input-file-trigger').style.background = 'rgb(50, 124, 184)'
     const file = e.target.files[0]
+    document.querySelector('.file-return').textContent = `Selected file: ${file.name}`
     if (window.FileReader) {
         const reader = new FileReader()
         reader.readAsText(file)
@@ -30,13 +32,12 @@ function mainProcess(allText) {
             document.querySelector('p.root').textContent = answer
         })
         document.querySelector('#input').style.display = 'block';
-        document.querySelector('form').addEventListener('submit', (e) => {
+        document.querySelector('form#xn-input').addEventListener('submit', (e) => {
             e.preventDefault();
             x = e.target.elements.x.value;
             n = e.target.elements.n.value;
             e.target.elements.x.value = '';
             e.target.elements.n.value = '';
-            
             try {
                 xn = validInput(x, n);
                 x = xn.x;

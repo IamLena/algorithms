@@ -10,36 +10,40 @@
                 //mainProcess(result)
             });
         </script>
-        <style>
-            input {
-                margin: 5px;
-            }
-            canvas {
-                margin: 5px;
-            }
-            #output {
-                margin: 5px;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="style.css">
     </head>
+
     <body>
-        <h1>Аппроксимация функции</h1>
+        <div class="grid-contener">
+            <div class="column-one">
+                <h1>Аппроксимация функции</h1>
+                <h3>Интерполяция полиномом Ньютона</h3>
+                
+                <form id="file">
+                    <div class="input-file-container">  
+                        <input class="input-file" id="my-file" type="file" onchange="handleFile(event)">
+                        <label class="input-file-trigger">Select a file...</label>
+                    </div>
+                    <p class="file-return"></p>
+                </form>
         
-        <input type="file" onchange="handleFile(event)">
-        <div id="input" style="display: none">
-            <p>Файл загружен</p>
-            <p>Введите вещественное значение аргумента, и неотрицательное целое значение степени функции</p>
-            <form>
-                <input placeholder = "input x" name="x">
-                <input placeholder ="input n" name="n">
-                <button>submit</button>
-            </form> 
-        </div>
-        <div id="output"></div>
-        <canvas id="Graph" height="500px" width="500px" style="border: 2px solid black"></canvas>
-        <div class="root">
-            <button class="root">Find root</button>
-            <p class="root"></p>
+                <div id="input" style="display: none">
+                    <form id="xn-input">
+                        <p>Введите вещественное значение аргумента,<br>и неотрицательное целое значение степени функции</p>
+                        <input placeholder = "input x" name="x">
+                        <input placeholder ="input n" name="n">
+                        <button>submit</button>
+                    </form> 
+                </div>
+                <div id="output"></div>
+                <div class="root">
+                    <button class="root">Find root</button>
+                    <p class="root"></p>
+                </div>
+            </div>
+            <div class="column-two">
+                <canvas id="Graph" height="500px" width="500px" style="border: 2px solid black"></canvas>
+            </div>
         </div>
     </body>
 </html>
