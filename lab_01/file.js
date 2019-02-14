@@ -1,5 +1,6 @@
 const handleFile = (e) => {
     //document.querySelector('.input-file-trigger').style.background = 'rgb(50, 124, 184)'
+    clearCanvas()
     const file = e.target.files[0]
     document.querySelector('.file-return').textContent = `Selected file: ${file.name}`
     if (window.FileReader) {
@@ -23,7 +24,17 @@ function mainProcess(allText) {
         let yValues = values.y;
         console.log(xValues);
         console.log(yValues);
-        draw(xValues, yValues);
+        let min = Math.abs(xValues[0])
+        let max = Math.abs(xValues[xValues.length - 1])
+        let edgeX = min > max ? min : max
+
+        min = Math.abs(yValues[0])
+        max = Math.abs(yValues[yValues.length - 1])
+        let edgeY = min > max ? min : max
+
+        draw(xValues, yValues, edgeX, edgeY);
+        document.querySelector('#input').style.display = 'block';
+
         document.querySelector('button.root').addEventListener('click', (e) => {
             console.log('click')
             const x = findRoot(yValues, xValues)
@@ -31,7 +42,7 @@ function mainProcess(allText) {
             console.log(answer)
             document.querySelector('p.root').textContent = answer
         })
-        document.querySelector('#input').style.display = 'block';
+
         document.querySelector('form#xn-input').addEventListener('submit', (e) => {
             e.preventDefault();
             x = e.target.elements.x.value;
@@ -208,21 +219,29 @@ const calculate = (x, koefs, xValues) => {
     return y
 }
 
-const scale = (x) => {
-    return 5* x + 220
+const scaleX = (width, k, x) => {
+    return width/2 + k * x
 }
 
-const draw = (xValues, yValues) => {
+const scaleY = (height, k, y) => {
+    return height/2 - k * y
+}
+
+const draw = (xValues, yValues, edgeX, edgeY) => {
     console.log('drawing')
     var canvas = document.querySelector('#Graph')
     if (canvas.getContext) {
+        const width = canvas.width
+        const height = canvas.height
+        const k = Math.abs((width - 15) / edgeX) < Math.abs((height - 15) / edgeY) ? Math.abs((width - 15) / edgeX) : Math.abs((height - 15) / edgeY)
+
         var ctx = canvas.getContext('2d')
 
         ctx.beginPath();
         ctx.strokeStyle = 'blue'
-        ctx.moveTo(scale(xValues[0]), 500-scale(yValues[0]))
+        ctx.moveTo(scaleX(width, k, xValues[0]), scaleY(height, k, yValues[0]))
         for (let i = 1; i < xValues.length; i++) {
-            ctx.lineTo(scale(xValues[i]), 500-scale(yValues[i]))
+            ctx.lineTo(scaleX(width, k, xValues[i]), scaleY(height, k, yValues[i]))
             ctx.stroke()
         }
     }
@@ -249,5 +268,25 @@ const clearCanvas = () => {
     if (canvas.getContext) {
         const ctx = canvas.getContext('2d')
         ctx.clearRect(0, 0, canvas.width, canvas.height)
+        //x
+        ctx.beginPath();
+        ctx.strokeStyle = 'black'
+        ctx.moveTo(canvas.width/2, 0)
+        ctx.lineTo(canvas.width/2 - 5, 12)
+        ctx.moveTo(canvas.width/2, 0)
+        ctx.lineTo(canvas.width/2 + 5, 12)
+        ctx.moveTo(canvas.width/2, 0)
+        ctx.lineTo(canvas.width/2, canvas.height)
+        ctx.stroke()
+        //y
+        ctx.beginPath();
+        ctx.strokeStyle = 'black'
+        ctx.moveTo(canvas.width, canvas.height/2)
+        ctx.lineTo(canvas.width-12, canvas.height/2-5)
+        ctx.moveTo(canvas.width, canvas.height/2)
+        ctx.lineTo(canvas.width-12, canvas.height/2+5)
+        ctx.moveTo(0, canvas.height/2)
+        ctx.lineTo(canvas.width, canvas.height/2)
+        ctx.stroke()
     }
 }
