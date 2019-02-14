@@ -32,7 +32,7 @@ function mainProcess(allText) {
         max = Math.abs(yValues[yValues.length - 1])
         let edgeY = min > max ? min : max
 
-        draw(xValues, yValues, edgeX, edgeY);
+        const k = draw(xValues, yValues, edgeX, edgeY);
         document.querySelector('#input').style.display = 'block';
 
         document.querySelector('button.root').addEventListener('click', (e) => {
@@ -44,6 +44,8 @@ function mainProcess(allText) {
         })
 
         document.querySelector('form#xn-input').addEventListener('submit', (e) => {
+            clearCanvas()
+            draw(xValues, yValues, edgeX, edgeY);
             e.preventDefault();
             x = e.target.elements.x.value;
             n = e.target.elements.n.value;
@@ -66,7 +68,7 @@ function mainProcess(allText) {
                 console.log(koefs);
                 const y = calculate(x, koefs, xRange);
                 printy(x, y)
-                drawByFunc(xValues, calculate, koefs, xRange)
+                drawByFunc(xValues, calculate, koefs, xRange, k)
                 
   
             } catch (e) {
@@ -233,7 +235,13 @@ const draw = (xValues, yValues, edgeX, edgeY) => {
     if (canvas.getContext) {
         const width = canvas.width
         const height = canvas.height
-        const k = Math.abs((width - 15) / edgeX) < Math.abs((height - 15) / edgeY) ? Math.abs((width - 15) / edgeX) : Math.abs((height - 15) / edgeY)
+        let absDivX = Math.abs((width - 25) / 2 / edgeX)
+        absDivX = Math.floor(absDivX)
+
+        let absDivY = Math.abs((height - 25) / 2 / edgeY)
+        absDivY = Math.floor(absDivY)
+
+        const k = absDivX < absDivY ? absDivX : absDivY
 
         var ctx = canvas.getContext('2d')
 
@@ -244,10 +252,11 @@ const draw = (xValues, yValues, edgeX, edgeY) => {
             ctx.lineTo(scaleX(width, k, xValues[i]), scaleY(height, k, yValues[i]))
             ctx.stroke()
         }
-    }
+        return k
+    }    
 }
 
-const drawByFunc = (xValues, f, koefs, xRange) => {
+const drawByFunc = (xValues, f, koefs, xRange, k) => {
     console.log('drawing')
     const canvas = document.querySelector('#Graph')
     if (canvas.getContext) {
@@ -255,9 +264,9 @@ const drawByFunc = (xValues, f, koefs, xRange) => {
 
         ctx.beginPath();
         ctx.strokeStyle = 'red'
-        ctx.moveTo(scale(xValues[0]), 500-scale(f(xValues[0], koefs, xRange)))
+        ctx.moveTo(scaleX(canvas.width, k, xValues[0]), scaleY(canvas.height, k, f(xValues[0], koefs, xRange)))
         for (let i = 1; i < xValues.length; i++) {
-            ctx.lineTo(scale(xValues[i]), 500-scale(f(xValues[i], koefs, xRange)))
+            ctx.lineTo(scaleX(canvas.width, k, xValues[i]), scaleY(canvas.height, k, f(xValues[i], koefs, xRange)))
             ctx.stroke()
         }
     }
