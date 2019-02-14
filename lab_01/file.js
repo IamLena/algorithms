@@ -85,6 +85,7 @@ function mainProcess(allText) {
 const findRoot = (xValues, yValues) => {
 
     console.log(xValues, yValues)
+    //error
     koefs = getKoefs(xValues, yValues)
     return calculate(0, koefs, xValues)
 
