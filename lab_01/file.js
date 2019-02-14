@@ -1,6 +1,10 @@
 const handleFile = (e) => {
     //document.querySelector('.input-file-trigger').style.background = 'rgb(50, 124, 184)'
     clearCanvas()
+    document.querySelector('p.root').textContent = ''
+    document.querySelector('#output').textContent = ''
+
+
     const file = e.target.files[0]
     document.querySelector('.file-return').textContent = `Selected file: ${file.name}`
     if (window.FileReader) {
@@ -85,8 +89,10 @@ function mainProcess(allText) {
 const findRoot = (xValues, yValues) => {
 
     console.log(xValues, yValues)
-    //error
-    koefs = getKoefs(xValues, yValues)
+    const xValuesCopy = xValues.slice()
+    const yValuesCopy = yValues.slice()
+
+    koefs = getKoefs(xValuesCopy, yValuesCopy)
     return calculate(0, koefs, xValues)
 
     // console.log('finding root')
