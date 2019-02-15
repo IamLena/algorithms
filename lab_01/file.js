@@ -33,7 +33,6 @@ function mainProcess(allText) {
 
         //draw the initial function, get scale koef back
         let k = getScaleKoef(xValues, yValues)
-        k = 17
         draw(xValues, yValues, k);
         document.querySelector('#input').style.display = 'block';
 
@@ -64,6 +63,7 @@ function mainProcess(allText) {
                 xn = validInput(x, n);
                 x = xn.x;
                 n = xn.n;
+                
                 const index = findXIndex(x, xValues);
                 values = getRange(n, xValues, yValues, index);
                 const xRange = values.x;
@@ -170,8 +170,10 @@ const findXIndex = (x, xValues) => {
     // finding A[i] <= x <= A[i+1]
     // if success result is A[i]
     for (let i = 0; i < length - 1; i++) {
-        if (xValues[i] <= x && x < xValues[i + 1]) {
-            return i
+        if (xValues[i] == x) {return i}
+        if (xValues[i+1] == x) {return i+1}
+        if (xValues[i] < x && x < xValues[i + 1]) {
+            return i + 1
         }
     }
     //if it is the last value
