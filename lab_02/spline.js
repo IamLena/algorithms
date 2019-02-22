@@ -71,7 +71,7 @@ function mainProcess(allText) {
                 x = parseFloat(x)
                 index = findXIndex(x, xValues)
                 if (index == xValues.length || index == -1) {
-                    alert('extropolation')
+                    alert('extrapolation')
                     document.querySelector('#output').textContent = ''
                 }
                 else if (index == 0) {
