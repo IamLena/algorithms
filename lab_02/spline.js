@@ -21,53 +21,83 @@ const handleFile = (e) => {
 
 function mainProcess(allText) {
     console.log('main process')
-    const values = processData(allText)
-    const xValues = values.x
-    const yValues = values.y
-    console.log(xValues)
-    console.log(yValues)
+    try {
+        const values = processData(allText)
+        const xValues = values.x
+        const yValues = values.y
+        console.log(xValues)
+        console.log(yValues)
 
-    const H = formH(xValues)
-    console.log(H)
-    const A = formA(H)
-    console.log(A)
-    const B = formB(H)
-    console.log(B)
-    const D = formD(H)
-    console.log(D)
-    const F = formF(H, yValues)
-    console.log(F)
-    const m = findKoef1(A, B, D)
-    console.log(m)
-    const n = findKoef2(A, B, F, m)
-    console.log(n)
-    const C = formC(m, n)
-    console.log(C)
+        k = getScaleKoef(xValues, yValues)
+        draw(xValues, yValues, k)
 
-    const a = backa(yValues)
-    console.log(a)
-    const d = backd(C, H)
-    console.log(d)
-    const b = backb(yValues, H, C)
-    console.log(b)
+        const H = formH(xValues)
+        const A = formA(H)
+        const B = formB(H)
+        const D = formD(H)
+        const F = formF(H, yValues)
+        const m = findKoef1(A, B, D)
+        const n = findKoef2(A, B, F, m)
+        const C = formC(m, n)
 
-    document.querySelector('#input').style.display = 'block'
+        console.log(H)
+        console.log(A)
+        console.log(B)
+        console.log(D)
+        console.log(F)
+        console.log(m)
+        console.log(n)
+        console.log(C)
+    
+        const a = backa(yValues)
+        const d = backd(C, H)
+        const b = backb(yValues, H, C)
 
-    document.querySelector('form#x-input').addEventListener('submit', (e) => {
-        e.preventDefault()
-        x = e.target.elements.x.value
-        e.target.elements.x.value = ''
-        if (!x) {
-            console.log('invalid input')
-        }
-        x = parseFloat(x)
-        index = findXIndex(x, xValues)
-        const y = calculate(x, xValues[index - 1], index, a, b, C, d)
-        console.log(y)
-    })
+        console.log(a)
+        console.log(d)
+        console.log(b)
+    
+        document.querySelector('#input').style.display = 'block'
+    
+        document.querySelector('form#x-input').addEventListener('submit', (e) => {
+            e.preventDefault()
+            x = e.target.elements.x.value
+            e.target.elements.x.value = ''
+            if (isNaN(x)) {
+                console.log('invalid input')
+                alert('invalid x')
+            }
+            else {
+                x = parseFloat(x)
+                index = findXIndex(x, xValues)
+                if (index == xValues.length || index == -1) {
+                    alert('extropolation')
+                    document.querySelector('#output').textContent = ''
+                }
+                else if (index == 0) {
+                    show_res(x, yValues[0])}
+                else {
+                    const y = calculate(x, xValues[index - 1], index, a, b, C, d)
+                    show_res(x, y)
+                    console.log(y)
+                }
+            }
+        })
+    }
+    catch (e) {
+        alert(e.message)
+    }
+}
+
+function show_res(x, y) {
+    y = y.toFixed(4)
+    str = `f(${x}) = ${y}`
+    document.querySelector('#output').textContent = str
 }
 
 function processData(allText) {
+    clearCanvas()
+    document.querySelector('#output').textContent = ''
     let xValues = []
     let yValues = []
     let values = []
@@ -194,7 +224,7 @@ const findXIndex = (x, xValues) => {
     // less than any value
     if (x < xValues[0]) {
         console.log('extrapolation')
-        alert('extropolation')
+        //alert('extropolation')
         //returning first index - 1 = -1
         return -1
     }
@@ -213,7 +243,7 @@ const findXIndex = (x, xValues) => {
     }
     // else x is greater than any value, returning last index + 1
     console.log('extrapolation')
-    alert('extropolation')
+    //alert('extropolation')
     return length
     //extrapolation is just by printing it
 }
@@ -237,4 +267,88 @@ function calculate(x, prevX, index, a, b, C, d) {
     y += d[index] * Math.pow(step, 3)
 
     return y
+}
+
+
+const scaleX = (width, k, x) => {
+    return width/2 + k * x
+}
+
+const scaleY = (height, k, y) => {
+    return height/2 - k * y
+}
+
+const getScaleKoef = (xValues, yValues) => {
+    const canvas = document.querySelector('#Graph')
+    const width = canvas.width
+    const height = canvas.height
+
+    //finding edged values for scale koefficient
+    let min = Math.abs(xValues[0])
+    let max = Math.abs(xValues[xValues.length - 1])
+    let edgeX = min > max ? min : max
+
+    min = Math.abs(yValues[0])
+    max = Math.abs(yValues[yValues.length - 1])
+    let edgeY = min > max ? min : max
+
+    let absDivX = Math.abs((width - 25) / 2 / edgeX)
+    absDivX = Math.floor(absDivX)
+
+    let absDivY = Math.abs((height - 25) / 2 / edgeY)
+    absDivY = Math.floor(absDivY)
+
+    const k = absDivX < absDivY ? absDivX : absDivY
+
+    return k
+}
+
+const draw = (xValues, yValues, k) => {
+    console.log('drawing')
+    var canvas = document.querySelector('#Graph')
+    if (canvas.getContext) {
+        const width = canvas.width
+        const height = canvas.height
+
+        var ctx = canvas.getContext('2d')
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'blue'
+        ctx.moveTo(scaleX(width, k, xValues[0]), scaleY(height, k, yValues[0]))
+        for (let i = 1; i < xValues.length; i++) {
+            ctx.lineTo(scaleX(width, k, xValues[i]), scaleY(height, k, yValues[i]))
+            ctx.stroke()
+            //debugger
+        }
+        // ctx.stroke()
+        return k
+    }    
+}
+
+const clearCanvas = () => {
+    const canvas = document.querySelector('#Graph')
+    if (canvas.getContext) {
+        const ctx = canvas.getContext('2d')
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        //x
+        ctx.beginPath();
+        ctx.strokeStyle = 'black'
+        ctx.moveTo(canvas.width/2, 0)
+        ctx.lineTo(canvas.width/2 - 5, 12)
+        ctx.moveTo(canvas.width/2, 0)
+        ctx.lineTo(canvas.width/2 + 5, 12)
+        ctx.moveTo(canvas.width/2, 0)
+        ctx.lineTo(canvas.width/2, canvas.height)
+        ctx.stroke()
+        //y
+        ctx.beginPath();
+        ctx.strokeStyle = 'black'
+        ctx.moveTo(canvas.width, canvas.height/2)
+        ctx.lineTo(canvas.width-12, canvas.height/2-5)
+        ctx.moveTo(canvas.width, canvas.height/2)
+        ctx.lineTo(canvas.width-12, canvas.height/2+5)
+        ctx.moveTo(0, canvas.height/2)
+        ctx.lineTo(canvas.width, canvas.height/2)
+        ctx.stroke()
+    }
 }
