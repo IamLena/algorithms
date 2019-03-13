@@ -17,6 +17,7 @@ const handleFile = (e) => {
 }
 
 function mainProcess(fileContent) {
+    document.querySelector('#result').textContent = ''
     try {
         const result = parseText(fileContent)
         const xValues = result.x
@@ -24,6 +25,7 @@ function mainProcess(fileContent) {
         const matrix = result.matrix
 
         document.querySelector('form').addEventListener('submit', (e) => {
+            document.querySelector('#result').textContent = ''
             e.preventDefault()
             let x = e.target.elements.x.value;
             let nx = e.target.elements.nx.value;
@@ -69,6 +71,7 @@ function mainProcess(fileContent) {
                 const koefs = getKoefs(xRange, zi)
                 interRes = calculate(x, koefs, xRange)
                 console.log(`z(${x}, ${y}) = ${interRes}`)
+                document.querySelector('#result').textContent = `z(${x}, ${y}) = ${interRes}`
             }
         })
     }

@@ -16,6 +16,18 @@ form {
     width: 39%;
 }
 
+#result {
+    display: inline-block;
+    text-align: center;
+    width:150px;
+    padding: 14px 45px;
+    border: 2px solid rgb(20, 22, 53);
+    color: black;
+    font-size: 1em;
+    transition: all .4s;
+    margin: 3px;
+}
+
 #submit {
     text-align: center;
     width:84%;
