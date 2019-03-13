@@ -19,6 +19,10 @@ const handleFile = (e) => {
 function mainProcess(fileContent) {
     try {
         result = parseText(fileContent)
+        xValues = result.x
+        yValues = result.y
+        matrix = result.matrix
+
         document.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault()
             x = e.target.elements.x.value;
@@ -39,6 +43,21 @@ function mainProcess(fileContent) {
                 y = parseFloat(y)
                 ny = parseInt(ny)
                 console.log(x, nx, y, ny)
+
+                console.log(xValues)
+                console.log(yValues)
+                indexX = findIndex(x, xValues)
+                indexY = findIndex(y, yValues)
+                console.log(indexX, indexY)
+
+                xRange = getRange(nx, xValues, indexX)
+                yRange = getRange(ny, yValues, indexY)
+
+                
+
+                console.log(xRange)
+                console.log(yRange)
+
             }
         })
     }
@@ -92,4 +111,62 @@ function parseText(text) {
 
 function isNotValid(x) {
     return (isNaN(x) || x == '')
+}
+
+const findIndex = (x, xValues) => {
+    const length = xValues.length
+    // less than any value
+    if (x < xValues[0]) {
+        console.log('extrapolation')
+        alert('extropolation')
+        //returning first index - 1 = -1
+        return -1
+    }
+    // finding A[i] <= x <= A[i+1]
+    // if success result is A[i]
+    for (let i = 0; i < length - 1; i++) {
+        if (xValues[i] == x) {return i}
+        if (xValues[i+1] == x) {return i+1}
+        if (xValues[i] < x && x < xValues[i + 1]) {
+            return i + 1
+        }
+    }
+    //if it is the last value
+    if (x === xValues[length - 1]) {
+        return length - 1
+    }
+    // else x is greater than any value, returning last index + 1
+    console.log('extrapolation')
+    alert('extropolation')
+    return length
+    //extrapolation is just by printing it
+}
+
+const getRange = (n, xValues, index) => {
+    const rangeLength = n + 1
+    console.log(rangeLength)
+    //the first n+1 values
+    if (index <= (rangeLength) / 2) {
+        return {
+            start: 0,
+            end: rangeLength
+        }
+        return xValues.slice(0, rangeLength)
+    }
+    // the n+1 values from the end
+    if (index >= xValues.length - rangeLength) {
+        return {
+            start: xValues.length - rangeLength,
+            end: xValues.length
+        }
+        return xValues.slice(-rangeLength)
+    }
+    // a slice in the middle
+    const indexFrom = index - Math.ceil(rangeLength / 2)
+    const indexTo = index + Math.floor(rangeLength / 2)
+    return {
+        start: indexFrom,
+        end: indexTo
+    }
+    return xValues.slice(indexFrom, indexTo)
 }
