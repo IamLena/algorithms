@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Интреполяция</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+    <script src="main.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Двумерная интерполяция</h1>
+        <input type="file" name="file" id="file" class="inputfile" onchange="handleFile(event)"/>
+        <label id="file-label" for="file"><strong>загрузите таблицу</strong></label>
+        <form>
+            <input class="input" name="x" placeholder="введите x">
+            <input class="input" name="nx" placeholder="введите nx">
+            <input class="input" name="y" placeholder="введите y">
+            <input class="input" name="ny" placeholder="введите ny">
+            <button id="submit">найти</button>
+        </form>
+    </div>
+</body>
+</html>
