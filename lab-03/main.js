@@ -18,19 +18,19 @@ const handleFile = (e) => {
 
 function mainProcess(fileContent) {
     try {
-        result = parseText(fileContent)
-        xValues = result.x
-        yValues = result.y
-        matrix = result.matrix
+        const result = parseText(fileContent)
+        const xValues = result.x
+        const yValues = result.y
+        const matrix = result.matrix
 
         document.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault()
-            x = e.target.elements.x.value;
-            nx = e.target.elements.nx.value;
+            let x = e.target.elements.x.value;
+            let nx = e.target.elements.nx.value;
             e.target.elements.x.value = '';
             e.target.elements.nx.value = '';
-            y = e.target.elements.y.value;
-            ny = e.target.elements.ny.value;
+            let y = e.target.elements.y.value;
+            let ny = e.target.elements.ny.value;
             e.target.elements.y.value = '';
             e.target.elements.ny.value = '';
             
@@ -42,22 +42,33 @@ function mainProcess(fileContent) {
                 nx = parseInt(nx)
                 y = parseFloat(y)
                 ny = parseInt(ny)
-                console.log(x, nx, y, ny)
-
-                console.log(xValues)
-                console.log(yValues)
-                indexX = findIndex(x, xValues)
-                indexY = findIndex(y, yValues)
-                console.log(indexX, indexY)
-
-                xRange = getRange(nx, xValues, indexX)
-                yRange = getRange(ny, yValues, indexY)
-
+                console.log(`x: ${x}, nx: ${nx}, y: ${y}, ny: ${ny}`)
                 
+                const indexX = findIndex(x, xValues)
+                const indexY = findIndex(y, yValues)
 
-                console.log(xRange)
-                console.log(yRange)
+                const xRangeIndexs = getRange(nx, xValues, indexX)
+                const yRangeIndexs = getRange(ny, yValues, indexY)
 
+                let zi = []
+                let xRange = []
+                for (let i = xRangeIndexs.start; i < xRangeIndexs.end; i++) {
+                    let zValues = []
+                    let yRange = []
+                    for (let j = yRangeIndexs.start; j < yRangeIndexs.end; j++) {
+                        yRange.push(yValues[j])
+                        zValues.push(matrix[i][j])
+                    }
+
+                    const koefs = getKoefs(yRange, zValues)
+                    zForXi = calculate(y, koefs, yRange)
+                    console.log(`z(${xValues[i]}, y) = ${zForXi}, for y in ${yRange}`)
+                    zi.push(zForXi)
+                    xRange.push(xValues[i])
+                }
+                const koefs = getKoefs(xRange, zi)
+                interRes = calculate(x, koefs, xRange)
+                console.log(`z(${x}, ${y}) = ${interRes}`)
             }
         })
     }
@@ -144,7 +155,6 @@ const findIndex = (x, xValues) => {
 
 const getRange = (n, xValues, index) => {
     const rangeLength = n + 1
-    console.log(rangeLength)
     //the first n+1 values
     if (index <= (rangeLength) / 2) {
         return {
@@ -169,4 +179,34 @@ const getRange = (n, xValues, index) => {
         end: indexTo
     }
     return xValues.slice(indexFrom, indexTo)
+}
+
+const getKoefs = (xValues, yValues) => {
+    const koefs = []
+    koefs.push(yValues[0])
+    let len = 2
+    for (let j = xValues.length - 1; j > 0; j--) {
+        for (let i = 0; i < j; i++) {
+            yValues[i] = (yValues[i] - yValues[i + 1]) / (xValues[i] - xValues[i + len - 1])
+        }
+        koefs.push(yValues[0])
+        len++
+    }
+    return koefs
+}
+
+const calculate = (x, koefs, xValues) => {
+    const length = koefs.length
+    let n = 0
+    let y = 0
+    for (let i = 0; i < length; i++) {
+        let mult = 1
+        for (let j = 0; j < n; j++) {
+            mult *= (x - xValues[j])
+        }
+        n++
+        //console.log(`+y = ${koefs[i]} * ${mult} = ${koefs[i] * mult}`)
+        y += (koefs[i] * mult)
+    }
+    return y
 }
