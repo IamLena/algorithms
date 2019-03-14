@@ -84,6 +84,7 @@ function mainProcess(fileContent) {
                         
                         const koefs = getKoefs(xRange, zi)
                         interRes = calculate(x, koefs, xRange)
+                        interRes = interRes.toFixed(4)
                         console.log(`z(${x}, ${y}) = ${interRes}`)
                         document.querySelector('#result').textContent = `z(${x}, ${y}) = ${interRes}`
                     }
@@ -176,7 +177,6 @@ const findIndex = (x, xValues) => {
 }
 
 const getRange = (n, xValues, index) => {
-    debugger
     const rangeLength = n + 1
     //the first n+1 values
     if (index <= (rangeLength) / 2) {
