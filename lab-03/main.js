@@ -13,7 +13,7 @@ const handleFile = (e) => {
             alert('filereader is not supported')
         }
     }
-    else {document.querySelector('.file-return').textContent = `загрузите таблицу`}
+    else {document.querySelector('.file-label').textContent = `загрузите таблицу`}
 }
 
 function mainProcess(fileContent) {
@@ -26,59 +26,78 @@ function mainProcess(fileContent) {
 
         document.querySelector('form').addEventListener('submit', (e) => {
             document.querySelector('#result').textContent = ''
+    
             e.preventDefault()
             let x = e.target.elements.x.value;
             let nx = e.target.elements.nx.value;
-            e.target.elements.x.value = '';
-            e.target.elements.nx.value = '';
             let y = e.target.elements.y.value;
             let ny = e.target.elements.ny.value;
+    
+            e.target.elements.x.value = '';
+            e.target.elements.nx.value = '';
             e.target.elements.y.value = '';
             e.target.elements.ny.value = '';
             
-            if (isNotValid(x) && isNotValid(y) && isNotValid(nx) && isNotValid(ny)) {
-                throw Error('invalid input') 
+            if (isNotValid(x) || isNotValid(y) || isNotValid(nx) || isNotValid(ny)) {
+                alert ('invalid input')
             }
             else {
                 x = parseFloat(x)
-                nx = parseInt(nx)
                 y = parseFloat(y)
-                ny = parseInt(ny)
+
+                nx = parseFloat(nx)
+                ny = parseFloat(ny)
+
+                if (nx - Math.floor(nx) != 0 || ny - Math.floor(ny) != 0) {
+                    nx = Math.floor(nx)
+                    ny = Math.floor(ny)
+                    alert(`nx and ny must be integers\nnx: ${nx}, ny: ${ny}`)
+                }
                 console.log(`x: ${x}, nx: ${nx}, y: ${y}, ny: ${ny}`)
                 
-                const indexX = findIndex(x, xValues)
-                const indexY = findIndex(y, yValues)
-
-                const xRangeIndexs = getRange(nx, xValues, indexX)
-                const yRangeIndexs = getRange(ny, yValues, indexY)
-
-                let zi = []
-                let xRange = []
-                for (let i = xRangeIndexs.start; i < xRangeIndexs.end; i++) {
-                    let zValues = []
-                    let yRange = []
-                    for (let j = yRangeIndexs.start; j < yRangeIndexs.end; j++) {
-                        yRange.push(yValues[j])
-                        zValues.push(matrix[i][j])
+                try {
+                    const indexX = findIndex(x, xValues)
+                    const indexY = findIndex(y, yValues)
+                    if (extra(indexX, xValues) || extra(indexY, yValues)) {
+                        alert ('extrapolation')
                     }
-
-                    const koefs = getKoefs(yRange, zValues)
-                    zForXi = calculate(y, koefs, yRange)
-                    console.log(`z(${xValues[i]}, y) = ${zForXi}, for y in ${yRange}`)
-                    zi.push(zForXi)
-                    xRange.push(xValues[i])
+                    else {
+                        const xRangeIndexs = getRange(nx, xValues, indexX)
+                        const yRangeIndexs = getRange(ny, yValues, indexY)
+        
+                        let zi = []
+                        let xRange = []
+                        for (let i = xRangeIndexs.start; i < xRangeIndexs.end; i++) {
+                            let zValues = []
+                            let yRange = []
+                            for (let j = yRangeIndexs.start; j < yRangeIndexs.end; j++) {
+                                yRange.push(yValues[j])
+                                zValues.push(matrix[i][j])
+                            }
+        
+                            const koefs = getKoefs(yRange, zValues)
+                            zForXi = calculate(y, koefs, yRange)
+                            console.log(`z(${xValues[i]}, ${y}) = ${zForXi}, for y from range ${yRange}`)
+                            zi.push(zForXi)
+                            xRange.push(xValues[i])
+                        }
+                        
+                        const koefs = getKoefs(xRange, zi)
+                        interRes = calculate(x, koefs, xRange)
+                        console.log(`z(${x}, ${y}) = ${interRes}`)
+                        document.querySelector('#result').textContent = `z(${x}, ${y}) = ${interRes}`
+                    }
                 }
-                const koefs = getKoefs(xRange, zi)
-                interRes = calculate(x, koefs, xRange)
-                console.log(`z(${x}, ${y}) = ${interRes}`)
-                document.querySelector('#result').textContent = `z(${x}, ${y}) = ${interRes}`
+                catch(e) {
+                    alert(e.message)
+                }
             }
         })
     }
     catch(e) {
+        console.log(e)
         alert(e.message)
     }
-    
 }
 
 function parseText(text) {
@@ -127,13 +146,15 @@ function isNotValid(x) {
     return (isNaN(x) || x == '')
 }
 
+function extra(x, xValues) {
+    return ((x == -1) || (x == xValues.length))
+}
+
 const findIndex = (x, xValues) => {
     const length = xValues.length
     // less than any value
     if (x < xValues[0]) {
         console.log('extrapolation')
-        alert('extropolation')
-        //returning first index - 1 = -1
         return -1
     }
     // finding A[i] <= x <= A[i+1]
@@ -151,12 +172,11 @@ const findIndex = (x, xValues) => {
     }
     // else x is greater than any value, returning last index + 1
     console.log('extrapolation')
-    alert('extropolation')
     return length
-    //extrapolation is just by printing it
 }
 
 const getRange = (n, xValues, index) => {
+    debugger
     const rangeLength = n + 1
     //the first n+1 values
     if (index <= (rangeLength) / 2) {
@@ -164,7 +184,6 @@ const getRange = (n, xValues, index) => {
             start: 0,
             end: rangeLength
         }
-        return xValues.slice(0, rangeLength)
     }
     // the n+1 values from the end
     if (index >= xValues.length - rangeLength) {
@@ -172,16 +191,14 @@ const getRange = (n, xValues, index) => {
             start: xValues.length - rangeLength,
             end: xValues.length
         }
-        return xValues.slice(-rangeLength)
     }
     // a slice in the middle
-    const indexFrom = index - Math.ceil(rangeLength / 2)
-    const indexTo = index + Math.floor(rangeLength / 2)
+    const indexFrom = index - Math.floor(rangeLength / 2)
+    const indexTo = index + Math.ceil(rangeLength / 2)
     return {
         start: indexFrom,
         end: indexTo
     }
-    return xValues.slice(indexFrom, indexTo)
 }
 
 const getKoefs = (xValues, yValues) => {
