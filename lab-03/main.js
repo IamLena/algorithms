@@ -41,6 +41,9 @@ function mainProcess(fileContent) {
             if (isNotValid(x) || isNotValid(y) || isNotValid(nx) || isNotValid(ny)) {
                 alert ('invalid input')
             }
+            else if (parseInt(nx) < 0 || parseInt(ny)) {
+                alert('ny and nx should be positive')
+            }
             else {
                 x = parseFloat(x)
                 y = parseFloat(y)
