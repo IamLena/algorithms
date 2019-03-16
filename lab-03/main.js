@@ -41,7 +41,7 @@ function mainProcess(fileContent) {
             if (isNotValid(x) || isNotValid(y) || isNotValid(nx) || isNotValid(ny)) {
                 alert ('invalid input')
             }
-            else if (parseInt(nx) < 0 || parseInt(ny)) {
+            else if (parseInt(nx) < 0 || parseInt(ny) < 0) {
                 alert('ny and nx should be positive')
             }
             else {
