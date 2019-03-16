@@ -63,7 +63,7 @@ function mainProcess(allText) {
             e.preventDefault()
             x = e.target.elements.x.value
             e.target.elements.x.value = ''
-            if (isNaN(x)) {
+            if (isNaN(x) || x === '') {
                 console.log('invalid input')
                 alert('invalid x')
             }
@@ -75,7 +75,8 @@ function mainProcess(allText) {
                     document.querySelector('#output').textContent = ''
                 }
                 else if (index == 0) {
-                    show_res(x, yValues[0])}
+                    show_res(x, yValues[0])
+                }
                 else {
                     const y = calculate(x, xValues[index - 1], index, a, b, C, d)
                     show_res(x, y)
@@ -160,7 +161,7 @@ function formF(H, yValues) {
     for (let i = 2; i < H.length; i++) {
         // console.log(`3 * ((${yValues[i]} - ${yValues[i - 1]}) / ${H[i - 1]} - (${yValues[i - 1]} - ${yValues[i - 2]})/${H[i - 2]})`)
         // console.log(`=${3 * ((yValues[i] - yValues[i - 1]) / H[i - 1] - ((yValues[i - 1] - yValues[i - 2]) / H[i - 2]))}`)
-        F.push(3 * ((yValues[i] - yValues[i - 1]) / H[i] - ((yValues[i - 1] - yValues[i - 2]) / H[i - 1])))
+        F.push(-3 * ((yValues[i] - yValues[i - 1]) / H[i] - ((yValues[i - 1] - yValues[i - 2]) / H[i - 1])))
     }
     return F
 }
@@ -177,8 +178,8 @@ function findKoef1(A, B, D) {
 function findKoef2(A, B, F, m) {
     let n = [0, 0, 0]
     for (let i = 2; i < B.length; i++) {
-        // console.log(`(${A[i]} * ${n[i]} + ${F[i]}) / (${B[i]} - ${A[i]} - ${m[i]})`)
-        n.push((A[i] * n[i] + F[i]) / (B[i] - A[i] - m[i]))
+        //console.log(`(${A[i]} * ${n[i]} + ${F[i]}) / (${B[i]} - ${A[i]} * ${m[i]})`)
+        n.push((A[i] * n[i] + F[i]) / (B[i] - A[i]* m[i]))
     }
     return n
 }
@@ -187,7 +188,7 @@ function formC(m, n) {
     let C = [0]
 
     let j = 0
-    for (let i = m.length - 1; i >= 0; i--, j++) {
+    for (let i = m.length - 1; i > 0; i--, j++) {
         // console.log(`${m[i]} * ${C[j]} + ${n[i]}`)
         C.push(m[i] * C[j] + n[i])
     }
