@@ -1,0 +1,75 @@
+#app {
+    border: 4px double rgb(73, 14, 14);
+    background: rgb(255, 218, 170);
+    padding: 10px;
+    width: 300px;
+    text-align: center;
+}
+
+form {
+    margin: 7px;
+}
+
+.input {
+    display: inline-block;
+    margin: 3px;
+    width: 39%;
+}
+
+#result {
+    display: inline-block;
+    text-align: center;
+    width:150px;
+    padding: 14px 45px;
+    border: 2px solid rgb(20, 22, 53);
+    color: black;
+    font-size: 1em;
+    transition: all .4s;
+    margin: 3px;
+}
+
+#submit {
+    text-align: center;
+    width:84%;
+    background:rgb(20, 22, 53);
+    color: #fff;
+    font-size: 1em;
+    transition: all .4s;
+    cursor: pointer;
+    margin: 3px;
+}
+
+#submit:hover {
+    background-color: rgb(73, 14, 14);
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.inputfile + label {
+    display: inline-block;
+    text-align: center;
+    width:150px;
+    padding: 14px 45px;
+    background:rgb(20, 22, 53);
+    color: #fff;
+    font-size: 1em;
+    transition: all .4s;
+    cursor: pointer;
+    margin: 3px;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: rgb(73, 14, 14);
+}
+
+/* .inputfile + label * {
+	pointer-events: none;
+} */
