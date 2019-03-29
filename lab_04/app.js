@@ -16,8 +16,8 @@ function fileHandler(e) {
 
 function mainProcess(allText) {
     console.log(allText)
-    const data = parseText(allText)
-    console.log(data)
+    const dots = parseText(allText)
+    drawDots(dots)
 
     document.querySelector("form").addEventListener('submit', (e) => {
         e.preventDefault()
@@ -29,6 +29,7 @@ function mainProcess(allText) {
                 alert('n should be positive integer')
             }
             console.log(n)
+            formMatrix(dots, n)
         }
     })
 }
@@ -41,10 +42,14 @@ function parseText(text) {
     const lines = text.split('\n') //line = xi, yi, pi\
     let dots = []
     lines.forEach((line) => {
-        dots.push(line.split(','))
+        const dot = line.split(',')
+        dot.forEach((item, index, array) => {
+            array[index] = parseFloat(item)
+        })
+        dots.push(dot)
     })
     console.log(dots)
-    return lines
+    return dots
 }
 
 function parseN (n) {
@@ -53,4 +58,38 @@ function parseN (n) {
         n = Math.floor(n)
         return n
     }
+}
+
+function drawDots(dots) {
+    let maxX = dots[0][0]
+    let maxY = dots[0][1]
+    dots.forEach((item) => {
+        if (item[0] >  maxX) {maxX = item[0]}
+        if (item[1] > maxY) {maxY = item[1]}
+    })
+    const max = maxX > maxY ? maxX : maxY
+    const scaleKoef = (500 - 5) / max
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = 'black'
+    dots.forEach((item) => {
+        ctx.fillRect(scaleKoef * item[0] - 1, scaleKoef * item[1] - 1, 2, 2)
+    })
+}
+
+function formMatrix(dots, n) {
+    const N = dots.length
+    const matrix = []
+    for (let i = 0; i <= n; i++) {
+        const line = []
+        for (let j = 0; j <= n; j++) {
+            let element = 0
+            for (let k = 0; k < N; k++) {
+                element += dots[k][2] * Math.pow(dots[k][0], i + j)
+            }
+            line.push(element)
+        }
+        matrix.push(line)
+    }
+    console.log(matrix)
 }
