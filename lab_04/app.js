@@ -15,14 +15,12 @@ function fileHandler(e) {
 }
 
 function mainProcess(allText) {
-    console.log(allText)
     try {
         const dots = parseText(allText)
-        drawDots(dots)
+        //drawDots(dots)
     
         document.querySelector("form").addEventListener('submit', (e) => {
             e.preventDefault()
-            clearCanvas()
             let n = e.target.elements.n.value
             if (isNotValid(n)) {alert('invalid n value')}
             else {
@@ -30,7 +28,7 @@ function mainProcess(allText) {
                 if (!n) {
                     alert('n should be positive integer')
                 }
-                console.log(n)
+                //clearCanvas()
                 let matrix = formMatrix(dots, n)
                 let vector = formVector(dots, n)
                 const aKoefs = getAkoefs(matrix, vector)
@@ -193,10 +191,19 @@ function drawGraph(dots, aKoefs) {
     const max = maxX > maxY ? maxX : maxY
     const scaleKoef = (500 - 5) / max
 
-    const start = dots[0][0]
-    const end = dots[dots.length - 1][0]
     const canvas = document.querySelector('canvas')
     const ctx = canvas.getContext('2d')
+
+    ctx.clearRect(0, 0, 500, 500)
+
+    ctx.fillStyle = 'red'
+    dots.forEach((item) => {
+        ctx.fillRect(scaleKoef * item[0] - 2, scaleKoef * item[1] - 2, 4, 4)
+    })
+
+    const start = dots[0][0]
+    const end = dots[dots.length - 1][0]
+    
     ctx.beginPath()
     for (let x = start; x <= end; x++) {
         y = calc(x, aKoefs)
