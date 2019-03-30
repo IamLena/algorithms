@@ -30,8 +30,8 @@ function mainProcess(allText) {
             }
             console.log(n)
             let matrix = formMatrix(dots, n)
-            const det = getDeterminator(matrix)
             let vector = formVector(dots, n)
+            const aKoefs = getAkoefs(matrix, vector)
         }
     })
 }
@@ -111,7 +111,38 @@ function formVector(dots, n) {
 }
 
 function getAkoefs(matrix, vector) {
+    const Mdet = getDeterminator(matrix)
+    let dets = []
+    for (let i = 0; i < matrix.length; i++) {
+        //swap column indexed i and vector
+        const matrixVector = swapColumn(matrix, vector, i)
+        //push det
+        dets.push(getDeterminator(matrixVector))
+    }
+    let aArray = []
+    dets.forEach((item) => {
+        aArray.push(item / Mdet)
+    })
+    console.log(aArray)
+    return aArray
+}
 
+
+function swapColumn(matrix, vector, index) {
+    let copyMat = []
+    for (let i = 0; i < matrix.length; i++) {
+        let line = []
+        for (let j = 0; j < matrix.length; j++) {
+            if (j == index) {
+                line.push(vector[j])
+            }
+            else {
+                line.push(matrix[i][j])
+            }
+        }
+        copyMat.push(line)
+    }
+    return copyMat
 }
 
 function getDeterminator(matrix) {
@@ -125,28 +156,17 @@ function getDeterminator(matrix) {
     }
 
     for (let k = 0; k < copyMat.length; k++) {
-        const first = copyMat[k][k]
-        copyMat[k].forEach((item, index, array) => {
-            array[index] = item / first
-        })
-        
         for (let i = k + 1; i < copyMat.length; i++) {
-            const koef = 1 / copyMat[i][k]
-            copyMat[i].forEach((item, index, array) => {
-                array[index] = item * koef
-            })
-        }
-
-        for (let i = k + 1; i < copyMat.length; i ++) {
+            const koef = copyMat[i][k] / copyMat[k][k]
             for (let j = k; j < copyMat.length; j++) {
-                copyMat[i][j] -= copyMat[k][j]
+                copyMat[i][j] -= koef * copyMat[k][j]
             }
         }
     }
+    
     let det = 1
     for (let i = 0; i < copyMat.length; i++) {
         det *= copyMat[i][i]
     }
-    console.log(copyMat)
     return det
 }
