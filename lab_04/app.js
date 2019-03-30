@@ -29,7 +29,9 @@ function mainProcess(allText) {
                 alert('n should be positive integer')
             }
             console.log(n)
-            formMatrix(dots, n)
+            let matrix = formMatrix(dots, n)
+            const det = getDeterminator(matrix)
+            let vector = formVector(dots, n)
         }
     })
 }
@@ -92,4 +94,59 @@ function formMatrix(dots, n) {
         matrix.push(line)
     }
     console.log(matrix)
+    return matrix
+}
+
+function formVector(dots, n) {
+    const N = dots.length
+    const vector = []
+    for (let i = 0; i <= n; i++) {
+        let element = 0
+        for (let k = 0; k < N; k++)
+            element += dots[k][2] * dots[k][1] * Math.pow(dots[k][0], i)
+        vector.push(element)
+    }
+    console.log(vector)
+    return vector
+}
+
+function getAkoefs(matrix, vector) {
+
+}
+
+function getDeterminator(matrix) {
+    let copyMat = []
+    for (let i = 0; i < matrix.length; i++) {
+        let line = []
+        for (let j = 0; j < matrix.length; j++) {
+            line.push(matrix[i][j])
+        }
+        copyMat.push(line)
+    }
+
+    for (let k = 0; k < copyMat.length; k++) {
+        const first = copyMat[k][k]
+        copyMat[k].forEach((item, index, array) => {
+            array[index] = item / first
+        })
+        
+        for (let i = k + 1; i < copyMat.length; i++) {
+            const koef = 1 / copyMat[i][k]
+            copyMat[i].forEach((item, index, array) => {
+                array[index] = item * koef
+            })
+        }
+
+        for (let i = k + 1; i < copyMat.length; i ++) {
+            for (let j = k; j < copyMat.length; j++) {
+                copyMat[i][j] -= copyMat[k][j]
+            }
+        }
+    }
+    let det = 1
+    for (let i = 0; i < copyMat.length; i++) {
+        det *= copyMat[i][i]
+    }
+    console.log(copyMat)
+    return det
 }
