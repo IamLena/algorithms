@@ -181,33 +181,55 @@ function getDeterminator(matrix) {
     return det
 }
 
+function scaledot (dot, scaleKoef) {
+    let copy = [dot[0], dot[1]]
+    copy[0] *= scaleKoef
+    copy[1] *= -scaleKoef
+    copy[0] += 250
+    copy[1] += 250
+    return copy
+}
+
 function drawGraph(dots, aKoefs) {
-    let maxX = dots[0][0]
-    let maxY = dots[0][1]
+    let maxX = Math.abs(dots[0][0])
+    let maxY = Math.abs(dots[0][1])
     dots.forEach((item) => {
-        if (item[0] >  maxX) {maxX = item[0]}
-        if (item[1] > maxY) {maxY = item[1]}
+        if (Math.abs(item[0]) >  maxX) {maxX = Math.abs(item[0])}
+        if (Math.abs(item[1]) > maxY) {maxY = Math.abs(item[1])}
     })
     const max = maxX > maxY ? maxX : maxY
-    const scaleKoef = (500 - 5) / max
+    const scaleKoef = Math.floor((250 - 10) / max)
+    //const scaleKoef = 1;
 
     const canvas = document.querySelector('canvas')
     const ctx = canvas.getContext('2d')
 
     ctx.clearRect(0, 0, 500, 500)
+    ctx.strokeStyle = 'grey'
+    ctx.beginPath()
+    ctx.moveTo(0, 250)
+    ctx.lineTo(500, 250)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(250, 0)
+    ctx.lineTo(250, 500)
+    ctx.stroke()
 
     ctx.fillStyle = 'red'
     dots.forEach((item) => {
-        ctx.fillRect(scaleKoef * item[0] - 2, scaleKoef * item[1] - 2, 4, 4)
+        const cur = scaledot(item, scaleKoef)
+        ctx.fillRect(cur[0]- 2, cur[1]- 2, 4, 4)
     })
 
     const start = dots[0][0]
     const end = dots[dots.length - 1][0]
     
+    ctx.strokeStyle = 'black'
     ctx.beginPath()
     for (let x = start; x <= end; x++) {
-        y = calc(x, aKoefs)
-        ctx.lineTo(scaleKoef * x, scaleKoef * y)
+        const y = calc(x, aKoefs)
+        const cur = scaledot([x, y], scaleKoef)
+        ctx.lineTo(cur[0], cur[1])
     }
     ctx.stroke()
 }
