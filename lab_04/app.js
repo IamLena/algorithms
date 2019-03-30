@@ -16,25 +16,31 @@ function fileHandler(e) {
 
 function mainProcess(allText) {
     console.log(allText)
-    const dots = parseText(allText)
-    drawDots(dots)
-
-    document.querySelector("form").addEventListener('submit', (e) => {
-        e.preventDefault()
-        let n = e.target.elements.n.value
-        if (isNotValid(n)) {alert('invalid n value')}
-        else {
-            n = parseN(n)
-            if (!n) {
-                alert('n should be positive integer')
+    try {
+        const dots = parseText(allText)
+        drawDots(dots)
+    
+        document.querySelector("form").addEventListener('submit', (e) => {
+            e.preventDefault()
+            clearCanvas()
+            let n = e.target.elements.n.value
+            if (isNotValid(n)) {alert('invalid n value')}
+            else {
+                n = parseN(n)
+                if (!n) {
+                    alert('n should be positive integer')
+                }
+                console.log(n)
+                let matrix = formMatrix(dots, n)
+                let vector = formVector(dots, n)
+                const aKoefs = getAkoefs(matrix, vector)
+                drawGraph(dots, aKoefs)
             }
-            console.log(n)
-            let matrix = formMatrix(dots, n)
-            let vector = formVector(dots, n)
-            const aKoefs = getAkoefs(matrix, vector)
-            drawGraph(dots, aKoefs)
-        }
-    })
+        })
+    }
+    catch(e) {
+        alert(e.message)
+    }
 }
 
 function isNotValid(x) {
@@ -46,8 +52,10 @@ function parseText(text) {
     let dots = []
     lines.forEach((line) => {
         const dot = line.split(',')
+        if (dot.length != 3) {throw Error ('invalid file content')}
         dot.forEach((item, index, array) => {
             array[index] = parseFloat(item)
+            if (isNaN(array[index])) {throw Error ('invalid file content')}
         })
         dots.push(dot)
     })
@@ -176,7 +184,6 @@ function getDeterminator(matrix) {
 }
 
 function drawGraph(dots, aKoefs) {
-
     let maxX = dots[0][0]
     let maxY = dots[0][1]
     dots.forEach((item) => {
@@ -185,12 +192,6 @@ function drawGraph(dots, aKoefs) {
     })
     const max = maxX > maxY ? maxX : maxY
     const scaleKoef = (500 - 5) / max
-    // const canvas = document.querySelector('canvas')
-    // const ctx = canvas.getContext('2d')
-    // ctx.fillStyle = 'black'
-    // dots.forEach((item) => {
-    //     ctx.fillRect(scaleKoef * item[0] - 1, scaleKoef * item[1] - 1, 2, 2)
-    // })
 
     const start = dots[0][0]
     const end = dots[dots.length - 1][0]
