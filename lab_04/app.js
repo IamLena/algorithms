@@ -32,6 +32,7 @@ function mainProcess(allText) {
             let matrix = formMatrix(dots, n)
             let vector = formVector(dots, n)
             const aKoefs = getAkoefs(matrix, vector)
+            drawGraph(dots, aKoefs)
         }
     })
 }
@@ -134,7 +135,7 @@ function swapColumn(matrix, vector, index) {
         let line = []
         for (let j = 0; j < matrix.length; j++) {
             if (j == index) {
-                line.push(vector[j])
+                line.push(vector[i])
             }
             else {
                 line.push(matrix[i][j])
@@ -156,6 +157,9 @@ function getDeterminator(matrix) {
     }
 
     for (let k = 0; k < copyMat.length; k++) {
+        if (copyMat[k][k] == 0) {
+            return 0
+        }
         for (let i = k + 1; i < copyMat.length; i++) {
             const koef = copyMat[i][k] / copyMat[k][k]
             for (let j = k; j < copyMat.length; j++) {
@@ -163,10 +167,47 @@ function getDeterminator(matrix) {
             }
         }
     }
-    
+
     let det = 1
     for (let i = 0; i < copyMat.length; i++) {
         det *= copyMat[i][i]
     }
     return det
+}
+
+function drawGraph(dots, aKoefs) {
+
+    let maxX = dots[0][0]
+    let maxY = dots[0][1]
+    dots.forEach((item) => {
+        if (item[0] >  maxX) {maxX = item[0]}
+        if (item[1] > maxY) {maxY = item[1]}
+    })
+    const max = maxX > maxY ? maxX : maxY
+    const scaleKoef = (500 - 5) / max
+    // const canvas = document.querySelector('canvas')
+    // const ctx = canvas.getContext('2d')
+    // ctx.fillStyle = 'black'
+    // dots.forEach((item) => {
+    //     ctx.fillRect(scaleKoef * item[0] - 1, scaleKoef * item[1] - 1, 2, 2)
+    // })
+
+    const start = dots[0][0]
+    const end = dots[dots.length - 1][0]
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+    ctx.beginPath()
+    for (let x = start; x <= end; x++) {
+        y = calc(x, aKoefs)
+        ctx.lineTo(scaleKoef * x, scaleKoef * y)
+    }
+    ctx.stroke()
+}
+
+function calc(x, aKoefs) {
+    let y = 0
+    for (let i = 0; i < aKoefs.length; i++) {
+        y += aKoefs[i] * Math.pow(x, i)
+    }
+    return y    
 }
