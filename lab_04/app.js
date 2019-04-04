@@ -14,10 +14,15 @@ function fileHandler(e) {
     }
 }
 
+function clearCanvas() {
+    document.querySelector('canvas').getContext('2d').clearRect(0, 0, 500, 500)
+}
+
 function mainProcess(allText) {
+    clearCanvas()
     try {
         const dots = parseText(allText)
-        //drawDots(dots)
+        drawDots(dots)
     
         document.querySelector("form").addEventListener('submit', (e) => {
             e.preventDefault()
@@ -28,7 +33,7 @@ function mainProcess(allText) {
                 if (!n) {
                     alert('n should be positive integer')
                 }
-                //clearCanvas()
+                clearCanvas()
                 let matrix = formMatrix(dots, n)
                 let vector = formVector(dots, n)
                 const aKoefs = getAkoefs(matrix, vector)
@@ -67,23 +72,6 @@ function parseN (n) {
         n = Math.floor(n)
         return n
     }
-}
-
-function drawDots(dots) {
-    let maxX = dots[0][0]
-    let maxY = dots[0][1]
-    dots.forEach((item) => {
-        if (item[0] >  maxX) {maxX = item[0]}
-        if (item[1] > maxY) {maxY = item[1]}
-    })
-    const max = maxX > maxY ? maxX : maxY
-    const scaleKoef = (500 - 5) / max
-    const canvas = document.querySelector('canvas')
-    const ctx = canvas.getContext('2d')
-    ctx.fillStyle = 'black'
-    dots.forEach((item) => {
-        ctx.fillRect(scaleKoef * item[0] - 1, scaleKoef * item[1] - 1, 2, 2)
-    })
 }
 
 function formMatrix(dots, n) {
@@ -133,7 +121,6 @@ function getAkoefs(matrix, vector) {
     console.log(aArray)
     return aArray
 }
-
 
 function swapColumn(matrix, vector, index) {
     let copyMat = []
@@ -190,7 +177,7 @@ function scaledot (dot, scaleKoef) {
     return copy
 }
 
-function drawGraph(dots, aKoefs) {
+function getScaleKoef(dots) {
     let maxX = Math.abs(dots[0][0])
     let maxY = Math.abs(dots[0][1])
     dots.forEach((item) => {
@@ -199,7 +186,11 @@ function drawGraph(dots, aKoefs) {
     })
     const max = maxX > maxY ? maxX : maxY
     const scaleKoef = Math.floor((250 - 10) / max)
-    //const scaleKoef = 1;
+    return scaleKoef
+}
+
+function drawDots(dots) {
+    const scaleKoef = getScaleKoef(dots)
 
     const canvas = document.querySelector('canvas')
     const ctx = canvas.getContext('2d')
@@ -220,6 +211,15 @@ function drawGraph(dots, aKoefs) {
         const cur = scaledot(item, scaleKoef)
         ctx.fillRect(cur[0]- 2, cur[1]- 2, 4, 4)
     })
+}
+
+
+function drawGraph(dots, aKoefs) {
+    drawDots(dots)
+    const scaleKoef = getScaleKoef(dots)
+
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
 
     const start = dots[0][0]
     const end = dots[dots.length - 1][0]
