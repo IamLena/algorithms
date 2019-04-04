@@ -1,3 +1,4 @@
+//fires when the file is chosen, gets the content and calls the mainProcess function
 function fileHandler(e) {
     const file = e.target.files[0]
     if (file) {
@@ -10,7 +11,8 @@ function fileHandler(e) {
             }
         }
         else {
-            alert('filereader is not supported')        }
+            alert('filereader is not supported')
+        }
     }
 }
 
@@ -34,9 +36,16 @@ function mainProcess(allText) {
                     alert('n should be a not negative integer')
                 }
                 clearCanvas()
+                // let Ematrix = formExtendedMatrix(dots, n)
+                // let koefs = solveSLAY(Ematrix)
+                // console.log('new')
+                // console.log(koefs)
+
                 let matrix = formMatrix(dots, n)
                 let vector = formVector(dots, n)
                 const aKoefs = getAkoefs(matrix, vector)
+                console.log('old')
+                console.log(aKoefs)
                 drawGraph(dots, aKoefs)
             }
         })
@@ -44,10 +53,6 @@ function mainProcess(allText) {
     catch(e) {
         alert(e.message)
     }
-}
-
-function isNotValid(x) {
-    return (isNaN(x) || x == '')
 }
 
 function parseText(text) {
@@ -63,9 +68,12 @@ function parseText(text) {
         dots.push(dot)
     })
     console.log(dots)
-    return dots
+    return dots // an array of arrays like [xi, xi, pi]
 }
 
+function isNotValid(x) {
+    return (isNaN(x) || x == '')
+}
 function parseN (n) {
     n = parseFloat(n)
     if (n - Math.floor(n) == 0 && n >= 0) {
@@ -75,6 +83,65 @@ function parseN (n) {
     else return -1
 }
 
+function formExtendedMatrix (dots, n) {
+    const N = dots.length
+    const matrix = []
+    for (let i = 0; i <= n; i++) {
+        const line = []
+        //matrixline
+        for (let j = 0; j <= n; j++) {
+            let element = 0
+            for (let k = 0; k < N; k++) {
+                element += dots[k][2] * Math.pow(dots[k][0], i + j)
+            }
+            line.push(element)
+        }
+        //vector
+        let element = 0
+        for (let k = 0; k < N; k++)
+            element += dots[k][2] * dots[k][1] * Math.pow(dots[k][0], i)
+        line.push(element)
+
+        matrix.push(line)
+    }
+    console.log(matrix)
+    return matrix
+}
+
+function solveSLAY(matrix) {
+    const n = matrix.length
+    //to tiangle form
+    for (let k = 1; k < n; k++) {
+        if (matrix[k-1][k-1] === 0) {
+            //swap lines k-1 and k
+            for (let i = 0; i <= n; i++) {
+                const temp = matrix[k-1][i]
+                matrix[k-1][i] = matrix[k][i]
+                matrix[k][i] = temp
+            }
+        }
+        for (let j = k; j < n; j++) {
+            const koef = matrix[j][k-1] / matrix[k-1][k-1]
+            if (koef != 0) {
+                for (let i = j; i <= n + 1; i++) {
+                    matrix[j][i] -= koef * matrix[k-1][k-1]
+                }
+            }
+        }
+    }
+    //get a koefs
+    let aKoefs = new Array(n).fill(0)
+    for (let i = n-1; i >= 0; i--) {
+        aKoefs[i] = matrix[i][n] / matrix[i][i]
+        for (let c = n-1; c > i; c--) {
+            aKoefs[i] = aKoefs[i]  - matrix[i][c] * aKoefs[c] / matrix[i][i]
+        }
+    }
+    return aKoefs
+}
+
+// Sum am * (um, uk) = (f, u) 
+// (for 0 < m <= n)
 function formMatrix(dots, n) {
     const N = dots.length
     const matrix = []
@@ -93,6 +160,7 @@ function formMatrix(dots, n) {
     return matrix
 }
 
+//Sum am * (um, uk) = (f, u) 
 function formVector(dots, n) {
     const N = dots.length
     const vector = []
@@ -107,23 +175,26 @@ function formVector(dots, n) {
 }
 
 function getAkoefs(matrix, vector) {
-    const Mdet = getDeterminator(matrix)
-    let dets = []
+    const Mdet = getDeterminator(matrix) //determinator of matrix
+    let dets = [] //array d1, d2, d3...
     for (let i = 0; i < matrix.length; i++) {
         //swap column indexed i and vector
         const matrixVector = swapColumn(matrix, vector, i)
-        //push det
+        //get det and push it to array
         dets.push(getDeterminator(matrixVector))
     }
+
     let aArray = []
     dets.forEach((item) => {
-        aArray.push(item / Mdet)
+        aArray.push(item / Mdet) // = di/dmatrix Kramer
     })
     console.log(aArray)
     return aArray
 }
 
 function swapColumn(matrix, vector, index) {
+    //creates a copy, pushes values from initial  with the exception of index column
+    // index column == vector
     let copyMat = []
     for (let i = 0; i < matrix.length; i++) {
         let line = []
@@ -140,6 +211,7 @@ function swapColumn(matrix, vector, index) {
     return copyMat
 }
 
+//gaus method
 function getDeterminator(matrix) {
     let copyMat = []
     for (let i = 0; i < matrix.length; i++) {
@@ -148,7 +220,7 @@ function getDeterminator(matrix) {
             line.push(matrix[i][j])
         }
         copyMat.push(line)
-    }
+    }//creates copy of initial matrix
 
     for (let k = 0; k < copyMat.length; k++) {
         if (copyMat[k][k] == 0) {
