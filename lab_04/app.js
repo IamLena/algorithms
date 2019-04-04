@@ -30,8 +30,8 @@ function mainProcess(allText) {
             if (isNotValid(n)) {alert('invalid n value')}
             else {
                 n = parseN(n)
-                if (!n) {
-                    alert('n should be positive integer')
+                if (n == -1) {
+                    alert('n should be a not negative integer')
                 }
                 clearCanvas()
                 let matrix = formMatrix(dots, n)
@@ -68,10 +68,11 @@ function parseText(text) {
 
 function parseN (n) {
     n = parseFloat(n)
-    if (n - Math.floor(n) == 0 && n > 0) {
+    if (n - Math.floor(n) == 0 && n >= 0) {
         n = Math.floor(n)
         return n
     }
+    else return -1
 }
 
 function formMatrix(dots, n) {
@@ -185,7 +186,8 @@ function getScaleKoef(dots) {
         if (Math.abs(item[1]) > maxY) {maxY = Math.abs(item[1])}
     })
     const max = maxX > maxY ? maxX : maxY
-    const scaleKoef = Math.floor((250 - 10) / max)
+    //const scaleKoef = Math.floor((250 - 10) / max)
+    const scaleKoef = (250 - 10) / max
     return scaleKoef
 }
 
@@ -221,8 +223,8 @@ function drawGraph(dots, aKoefs) {
     const canvas = document.querySelector('canvas')
     const ctx = canvas.getContext('2d')
 
-    const start = dots[0][0]
-    const end = dots[dots.length - 1][0]
+    const start = -250 + 10 / scaleKoef //dots[0][0]
+    const end = -start //dots[dots.length - 1][0]
     
     ctx.strokeStyle = 'black'
     ctx.beginPath()
