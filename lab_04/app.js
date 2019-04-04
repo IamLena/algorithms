@@ -176,6 +176,7 @@ function formVector(dots, n) {
 
 function getAkoefs(matrix, vector) {
     const Mdet = getDeterminator(matrix) //determinator of matrix
+    if (Mdet == 0) {alert ('n is too big for this amount of data')}
     let dets = [] //array d1, d2, d3...
     for (let i = 0; i < matrix.length; i++) {
         //swap column indexed i and vector
