@@ -1,0 +1,9 @@
+canvas {
+    border: solid black 2px;
+    background-color: rgb(202, 229, 233);
+    margin: 5px;
+}
+
+input {
+    margin: 2px;
+}
