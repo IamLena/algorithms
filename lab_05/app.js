@@ -1,12 +1,61 @@
 //document.querySelector('button').addEventListener('click', (e) => console.log('clicked'))
 
-function myFunc(x) {
-    return Math.pow(x, 3) + 8
+const t0 = 5000
+const tw = 20000
+const m = 8
+const pn = 15
+const tn = 10000
+const k = 1.38 * Math.pow(10, -23)
+
+function nt(P, T) {
+    return 7242 * P / T
+}
+
+function formNtArray(P) {
+    let ntArray = []
+    const N = 40
+    const step = 1 / 40
+
+    for (let i = 0; i < 1; i += step) {
+        const curT = T(t0, tw, i, m)
+        ntArray.push(nt(P, curT))
+    }
+    return ntArray
+}
+
+function T(t0, tw, z, m) {
+    return t0 + (tw - t0) * Math.pow(z, m)
+}
+
+function integralByDots(ntArray) {
+    let I = 0
+    const Nsteps = 40
+    const step = 1 / Nsteps
+
+    for (let i = 1; i < Nsteps - 1; i += 2) {
+        I += (ntArray[i - 1] + 4 * ntArray[i] + ntArray[i + 1])
+    }
+    return I * step / 3
+}
+
+function myFunc(p) {
+    ntArray = formNtArray(p)
+    ntArray.forEach((item, index, array) => {
+        array[index] = item * index / 40
+    })
+    const fValue = 7242 * pn/tn - 2 * integralByDots(ntArray)
+    console.log(fValue)
+    return fValue
 }
 
 // root on [a, b] with precision of eps
 function halfDivision(a, b, eps, f) {
-    debugger
+    if (a > b) {
+        let t = a
+        a = b
+        b = t
+    }
+    console.log(a, b)
     if (f(a) * f(b) > 0) {
         alert('no root on this interval')
         return
@@ -27,11 +76,29 @@ function halfDivision(a, b, eps, f) {
     return rootValue
 }
 
-// function lagorifm(a, b,){
+//метод Симпсона
+// ищет интеграл от параболы построенной по трем точкам - границам и среднему
+function integral(a, b, f){
+    if (a > b) {
+        let t = a
+        a = b
+        b = t
+    }
 
-// }
+    let I = 0
+    const Nsteps = 40
+    const step = (b - a) / Nsteps
+    console.log(step)
+
+    for (let i = a; i < b; i += step) {
+        I = I + ((i + step - i) / 6 * (f(i) + 4 * f((i + i + step)/2) + f(i + step)))
+    }
+    return I
+}
 
 console.log('hello')
-debugger
-result = halfDivision(-3, -1.5, 0.0001, myFunc)
+const result = halfDivision(3, 25, 0.0001, myFunc)
 console.log(`result: f(${result}) = ${myFunc(result)}`)
+
+// const integralValue = integral(0, 5, myFunc)
+// console.log(`integral = ${integralValue}`)
