@@ -1,11 +1,11 @@
 //document.querySelector('button').addEventListener('click', (e) => console.log('clicked'))
 
-function f(x) {
+function myFunc(x) {
     return Math.pow(x, 3) + 8
 }
 
 // root on [a, b] with precision of eps
-function halfDivision(a, b, eps) {
+function halfDivision(a, b, eps, f) {
     debugger
     if (f(a) * f(b) > 0) {
         alert('no root on this interval')
@@ -24,11 +24,14 @@ function halfDivision(a, b, eps) {
         }
         rootValue = (a + b) / 2
     }
-    
     return rootValue
 }
 
+// function lagorifm(a, b,){
+
+// }
+
 console.log('hello')
 debugger
-result = halfDivision(-3, -1.5, 0.0001)
-console.log(`result: f(${result}) = ${f(result)}`)
+result = halfDivision(-3, -1.5, 0.0001, myFunc)
+console.log(`result: f(${result}) = ${myFunc(result)}`)
