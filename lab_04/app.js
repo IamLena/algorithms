@@ -44,7 +44,7 @@ function mainProcess(allText) {
                 let matrix = formMatrix(dots, n)
                 let vector = formVector(dots, n)
                 const aKoefs = getAkoefs(matrix, vector)
-                console.log('old')
+                //console.log('old')
                 console.log(aKoefs)
                 drawGraph(dots, aKoefs)
             }
@@ -189,7 +189,6 @@ function getAkoefs(matrix, vector) {
     dets.forEach((item) => {
         aArray.push(item / Mdet) // = di/dmatrix Kramer
     })
-    console.log(aArray)
     return aArray
 }
 
@@ -234,6 +233,8 @@ function getDeterminator(matrix) {
             }
         }
     }
+
+    console.log(copyMat)
 
     let det = 1
     for (let i = 0; i < copyMat.length; i++) {
