@@ -1,11 +1,12 @@
 //document.querySelector('button').addEventListener('click', (e) => console.log('clicked'))
 
-const t0 = 5000
-const tw = 20000
+const t0 = 6000
+const tw = 2000
 const m = 8
 const pn = 15
-const tn = 10000
+const tn = 5000
 const k = 1.38 * Math.pow(10, -23)
+
 
 function nt(P, T) {
     return 7242 * P / T
@@ -14,12 +15,15 @@ function nt(P, T) {
 function formNtArray(P) {
     let ntArray = []
     const N = 40
-    const step = 1 / 40
+    const step = 1 / N
 
-    for (let i = 0; i < 1; i += step) {
-        const curT = T(t0, tw, i, m)
+    let z = 0
+    for (let i = 0; i <= N; i ++) {
+        const curT = T(t0, tw, z, m)
         ntArray.push(nt(P, curT))
+        z += step
     }
+    console.log(`LENGTH: ${ntArray.length}`)
     return ntArray
 }
 
@@ -32,7 +36,7 @@ function integralByDots(ntArray) {
     const Nsteps = 40
     const step = 1 / Nsteps
 
-    for (let i = 1; i < Nsteps - 1; i += 2) {
+    for (let i = 1; i < Nsteps; i += 2) {
         I += (ntArray[i - 1] + 4 * ntArray[i] + ntArray[i + 1])
     }
     return I * step / 3
