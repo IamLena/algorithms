@@ -1,10 +1,10 @@
 //document.querySelector('button').addEventListener('click', (e) => console.log('clicked'))
 
-const t0 = 6000
-const tw = 2000
-const m = 8
-const pn = 15
-const tn = 5000
+const t0 = 3000
+const tw = 3000
+const m = 1
+const pn = 0.5
+const tn = 300
 const k = 1.38 * Math.pow(10, -23)
 
 
@@ -100,9 +100,100 @@ function integral(a, b, f){
     return I
 }
 
-console.log('hello')
-const result = halfDivision(3, 25, 0.0001, myFunc)
-console.log(`result: f(${result}) = ${myFunc(result)}`)
+// console.log('hello')
+// const result = halfDivision(3, 25, 0.0001, myFunc)
+// console.log(`result: f(${result}) = ${myFunc(result)}`)
+
+
+function graph() {
+    function scaleDot(dot, dx, dy) {
+        dot[0] = 10 * dot[0] + dx
+        dot[1] = -0.001 * dot[1] + dy
+        return dot
+    }
+    
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+    const width = canvas.width
+    const height = canvas.height
+    const dx = width / 2
+    const dy = height / 2
+    
+    ctx.beginPath()
+    ctx.moveTo(0, dy)
+    ctx.lineTo(width, dy)
+    ctx.stroke()
+    
+    ctx.beginPath()
+    ctx.moveTo(dx, 0)
+    ctx.lineTo(dx, height)
+    ctx.stroke()
+    
+    // ctx.moveTo(0, myFunc(0))
+    // ctx.beginPath()
+    // for (let p = 0; p < 30; p += 1) {
+    //     let dot = scaleDot([p, myFunc(p)], dx, dy)
+    //     ctx.lineTo(dot[0], dot[1])
+    // }
+    
+    // ctx.moveTo(0, T(0))
+    // ctx.beginPath()
+    // for (let z = 0; z < 1.1; z += 1/40) {
+    //     let dot = scaleDot([z, T(t0, tw, z, m)], dx, dy)
+    //     ctx.lineTo(dot[0], dot[1])
+    // }
+    // ctx.stroke()
+}
 
 // const integralValue = integral(0, 5, myFunc)
 // console.log(`integral = ${integralValue}`)
+let matrix = [[4, 5, 9], [7, 8, -1], [9, 8, 1]]
+let array = [1, 2, 8]
+console.log(solveSLAY(matrix, array))
+
+function solveSLAY(matrix, array) {
+    const length = matrix.length
+    let deltasRES = new Array(length).fill(0)
+    // put max up
+    for (let i = 0; i <= length; i ++)
+    {
+        let maxEl = 0
+        let max_index = 0
+        for (let k = i; k < length; k++) {
+            if (Math.abs(matrix[k][i]) >= maxEl) {
+                maxEl = Math.abs(matrix[k][i])
+                max_index = k
+            }
+        }
+        if (maxEl === 0) {console.log('zero gauss'); return}
+        if (max_index != i) {
+            for (let k = 0; k < length; k++) {
+                let tmp = matrix[i][k]
+                matrix[i][k] = matrix[max_index][k]
+                matrix[max_index][k] = tmp
+            }
+            tmp = array[max_index]
+            array[max_index] = array[i]
+            array[i] = tmp
+        }
+        let diagEL = matrix[i][i]
+        for (let k = i + 1; k < length; k++) {
+            const coef = matrix[k][i] / diagEL
+            for (let j = i; j < length; j++) {
+                matrix[k][j] -= coef * matrix[i][j]
+            }
+            array[k] -= coef * array[i]
+        }
+
+        console.log(matrix)
+        console.log(array)
+        console.log(deltasRES)
+    }
+    for (let i = length - 1; i >= 0; i--) {
+        for (let j = length - 1; j > i; j--) {
+            array[i] -= deltas[j] * matrix[i][j]
+        }
+        deltasRES[i] = array[i] / matrix[i][i]
+    }
+    return deltaRES
+}
