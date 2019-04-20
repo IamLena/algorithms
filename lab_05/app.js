@@ -154,8 +154,7 @@ console.log(solveSLAY(matrix, array))
 function solveSLAY(matrix, array) {
     const length = matrix.length
     let deltasRES = new Array(length).fill(0)
-    // put max up
-    for (let i = 0; i <= length; i ++)
+    for (let i = 0; i < length; i ++)
     {
         let maxEl = 0
         let max_index = 0
@@ -184,16 +183,16 @@ function solveSLAY(matrix, array) {
             }
             array[k] -= coef * array[i]
         }
-
-        console.log(matrix)
-        console.log(array)
-        console.log(deltasRES)
     }
+    console.log('hey')
+    console.log(matrix)
+    console.log(array)
+    console.log(deltasRES)
     for (let i = length - 1; i >= 0; i--) {
         for (let j = length - 1; j > i; j--) {
-            array[i] -= deltas[j] * matrix[i][j]
+            array[i] -= deltasRES[j] * matrix[i][j]
         }
         deltasRES[i] = array[i] / matrix[i][i]
     }
-    return deltaRES
+    return deltasRES
 }
