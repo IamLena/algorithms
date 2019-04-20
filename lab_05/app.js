@@ -1,15 +1,104 @@
-//document.querySelector('button').addEventListener('click', (e) => console.log('clicked'))
-
+// ввод
 const t0 = 3000
 const tw = 3000
 const m = 1
+
+// начальные
+const eps = 0.0001
 const pn = 0.5
 const tn = 300
-const k = 1.38 * Math.pow(10, -23)
+let v = -1, x1 = 2, x2 = -1, x3 = -10, x4 = -25, x5 = -25
 
+// const
+const E = [12.13, 20.98, 31.00, 45.00]
+// T - Q1, Q2, Q3, Q4, Q5
+const Q = [[2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000, 22000, 24000, 26000],
+[1, 1, 1, 1.0001, 1.0025, 1.0198, 1.0895, 1.2827, 1.6973, 2.4616, 3.6552, 5.3749, 7.6838],
+[4, 4, 4.1598, 4.3006, 4.4392, 4.5661, 4.6817, 4.7923, 4.9099, 5.0511, 5.2354, 5.4841, 5.8181],
+[5.5, 5.5, 5.5116, 5.9790, 6.4749, 6.9590, 7.4145, 7.8370, 8.2289, 8.5970, 8.9509, 9.3018, 9.6621],
+[11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11],
+[15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]]
+
+const zaryd1 = 0
+const zaryd2 = 1
+const zaryd3 = 2
+const zaryd4 = 3
+const zaryd5 = 4
+
+// концентрации
+let n1 = Math.exp(x1)
+let n2 = Math.exp(x2)
+let n3 = Math.exp(x3)
+let n4 = Math.exp(x4)
+let n5 = Math.exp(x5)
+let ne = Math.exp(v)
 
 function nt(P, T) {
-    return 7242 * P / T
+    calcConcentration(P, T)
+    const sum = n1 + n2 + n3 + n4 + n5
+    return Math.pow(sum, -18)
+    //     return 7242 * P / T
+}
+
+function calcConcentration(P, T) {
+    let alpha = 0
+    let gamma = 0
+    let deltas
+
+    do {
+        let matrix = [
+        [1, -1, 1, 0, 0, 0],
+        [1, 0, -1, 1, 0, 0],
+        [1, 0, 0, -1, 1, 0],
+        [1, 0, 0, 0, -1, 1],
+        [ne, 0, -zaryd2*n2, -zaryd3*n3, -zaryd4*n4, -zaryd5*n5],
+        [-ne, -n1, -n2, -n3, -n4, -n5]]
+        let array = [
+            -v - x2 + x1 + lnK1,
+            -v - x3 + x2 + lnK2,
+            -v - x4 + x3 + lnK3,
+            -v - x5 + x4 + lnK4,
+            -ne + zaryd2 * n2 + zaryd3 * n3 + zaryd4 * n4 + zaryd5 *n5,
+            -7242 * P / T + ne + n1 + n2 + n3 + n4 + n5 - alpha
+        ]
+        deltas = solveSLAY(matrix, array)
+        v += deltas[0]
+        x1 += deltas[1]
+        x2 += deltas[2]
+        x3 += deltas[3]
+        x4 += deltas[4]
+        x5 += deltas[5]
+    } while (
+        Math.abs(deltas[0]/v) < eps && 
+        Math.abs(deltas[1]/x1) < eps &&
+        Math.abs(deltas[2]/x2) < eps &&
+        Math.abs(deltas[3]/x3) < eps &&
+        Math.abs(deltas[4]/x4) < eps &&
+        Math.abs(deltas[5]/x5) < eps)
+}
+
+function calcAlpha(gamma, T) {
+    return 0.285 * Math.pow(10, -11) * Math.pow((gamma * T), 3)
+}
+function calcK(i, T) {
+    return 4.83 * Math.pow(10, -3) * findQ(i + 1, T)/findQ(i, T) * Math.pow(T, 3/2) * Math.epx(-(E[i] - deltaE(i)) * 11604/T)
+}
+
+function findQ(i, T) {
+
+}
+
+function deltaE(i) {
+
+}
+
+function gammaFunc() {
+    const sum = (n2 * Math.pow(zaryd2, 2))/(1 + Math.pow(zaryd2, 2) + gamma / 2) + 
+    (n3 * Math.pow(zaryd3, 2))/(1 + Math.pow(zaryd3, 2) + gamma / 2) +
+    (n4 * Math.pow(zaryd4, 2))/(1 + Math.pow(zaryd4, 2) + gamma / 2) +
+    (n5 * Math.pow(zaryd5, 2))/(1 + Math.pow(zaryd5, 2) + gamma / 2)
+
+    return Math.pow(gamma, 2) - 5.87 * Math.pow(10, 10) / Math.pow(T, 3) * (ne/(1 + gamma / 2) + sum)
 }
 
 function formNtArray(P) {
@@ -105,51 +194,9 @@ function integral(a, b, f){
 // console.log(`result: f(${result}) = ${myFunc(result)}`)
 
 
-function graph() {
-    function scaleDot(dot, dx, dy) {
-        dot[0] = 10 * dot[0] + dx
-        dot[1] = -0.001 * dot[1] + dy
-        return dot
-    }
-    
-    const canvas = document.querySelector('canvas')
-    const ctx = canvas.getContext('2d')
-    const width = canvas.width
-    const height = canvas.height
-    const dx = width / 2
-    const dy = height / 2
-    
-    ctx.beginPath()
-    ctx.moveTo(0, dy)
-    ctx.lineTo(width, dy)
-    ctx.stroke()
-    
-    ctx.beginPath()
-    ctx.moveTo(dx, 0)
-    ctx.lineTo(dx, height)
-    ctx.stroke()
-    
-    // ctx.moveTo(0, myFunc(0))
-    // ctx.beginPath()
-    // for (let p = 0; p < 30; p += 1) {
-    //     let dot = scaleDot([p, myFunc(p)], dx, dy)
-    //     ctx.lineTo(dot[0], dot[1])
-    // }
-    
-    // ctx.moveTo(0, T(0))
-    // ctx.beginPath()
-    // for (let z = 0; z < 1.1; z += 1/40) {
-    //     let dot = scaleDot([z, T(t0, tw, z, m)], dx, dy)
-    //     ctx.lineTo(dot[0], dot[1])
-    // }
-    // ctx.stroke()
-}
-
-// const integralValue = integral(0, 5, myFunc)
-// console.log(`integral = ${integralValue}`)
-let matrix = [[4, 5, 9], [7, 8, -1], [9, 8, 1]]
-let array = [1, 2, 8]
-console.log(solveSLAY(matrix, array))
+// let matrix = [[4, 5, 9], [7, 8, -1], [9, 8, 1]]
+// let array = [1, 2, 8]
+// console.log(solveSLAY(matrix, array))
 
 function solveSLAY(matrix, array) {
     const length = matrix.length
@@ -184,10 +231,8 @@ function solveSLAY(matrix, array) {
             array[k] -= coef * array[i]
         }
     }
-    console.log('hey')
     console.log(matrix)
     console.log(array)
-    console.log(deltasRES)
     for (let i = length - 1; i >= 0; i--) {
         for (let j = length - 1; j > i; j--) {
             array[i] -= deltasRES[j] * matrix[i][j]
