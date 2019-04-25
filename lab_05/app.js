@@ -1,12 +1,12 @@
 // ввод
-const t0 = 3000
-const tw = 3000
+const t0 = 6000
+const tw = 25000
 const m = 1
 
 // начальные
 const eps = 0.0001
-const pn = 0.5
-const tn = 300
+const pn = 15
+const tn = 10000
 let v = -1, x1 = 2, x2 = -1, x3 = -10, x4 = -25, x5 = -25
 
 // const
@@ -33,16 +33,19 @@ let n4 = Math.exp(x4)
 let n5 = Math.exp(x5)
 let ne = Math.exp(v)
 
+let alpha = 0
+let gamma = 0
+
 function nt(P, T) {
     calcConcentration(P, T)
     const sum = n1 + n2 + n3 + n4 + n5
+    console.log('concentrations:')
+    console.log(n1, n2, n3, n4, n5)
     return Math.pow(sum, -18)
     //     return 7242 * P / T
 }
 
 function calcConcentration(P, T) {
-    let alpha = 0
-    let gamma = 0
     let deltas
 
     do {
@@ -54,12 +57,12 @@ function calcConcentration(P, T) {
         [ne, 0, -zaryd2*n2, -zaryd3*n3, -zaryd4*n4, -zaryd5*n5],
         [-ne, -n1, -n2, -n3, -n4, -n5]]
         let array = [
-            -v - x2 + x1 + lnK1,
-            -v - x3 + x2 + lnK2,
-            -v - x4 + x3 + lnK3,
-            -v - x5 + x4 + lnK4,
+            -v - x2 + x1 + Math.log(calcK(1, T)),
+            -v - x3 + x2 + Math.log(calcK(2, T)),
+            -v - x4 + x3 + Math.log(calcK(3, T)),
+            -v - x5 + x4 + Math.log(calcK(4, T)),
             -ne + zaryd2 * n2 + zaryd3 * n3 + zaryd4 * n4 + zaryd5 *n5,
-            -7242 * P / T + ne + n1 + n2 + n3 + n4 + n5 - alpha
+            -7242 * P / T + ne + n1 + n2 + n3 + n4 + n5 - calcAlpha(gamma, T)
         ]
         deltas = solveSLAY(matrix, array)
         v += deltas[0]
@@ -68,6 +71,15 @@ function calcConcentration(P, T) {
         x3 += deltas[3]
         x4 += deltas[4]
         x5 += deltas[5]
+
+        n1 = Math.exp(x1)
+        n2 = Math.exp(x2)
+        n3 = Math.exp(x3)
+        n4 = Math.exp(x4)
+        n5 = Math.exp(x5)
+        ne = Math.exp(v)
+
+        gamma = halfDivision(0, 3, 0.0001, gammaFunc)
     } while (
         Math.abs(deltas[0]/v) < eps && 
         Math.abs(deltas[1]/x1) < eps &&
@@ -81,7 +93,7 @@ function calcAlpha(gamma, T) {
     return 0.285 * Math.pow(10, -11) * Math.pow((gamma * T), 3)
 }
 function calcK(i, T) {
-    return 4.83 * Math.pow(10, -3) * findQ(i + 1, T)/findQ(i, T) * Math.pow(T, 3/2) * Math.epx(-(E[i] - deltaE(i)) * 11604/T)
+    return 4.83 * Math.pow(10, -3) * findQ(i + 1, T)/findQ(i, T) * Math.pow(T, 3/2) * Math.exp(-(E[i - 1] - deltaE(i, T)) * 11604/T)
 }
 
 function findQ(i, T) {
@@ -93,10 +105,10 @@ function findQ(i, T) {
     return y
 }
 
-
-
-function deltaE(i) {
-
+function deltaE(i, T) {
+    //zaryd[i+1] = i, zaryd[i] = i - 1
+    let gammaDiv = (1 + Math.pow(i, 2) * gamma / 2) * (1 + gamma/2) / (1 + Math.pow((i - 1), 2) * gamma / 2)
+    return 8.61 * Math.pow(10, -5) * T * Math.log(gammaDiv)
 }
 
 function gammaFunc() {
@@ -119,7 +131,6 @@ function formNtArray(P) {
         ntArray.push(nt(P, curT))
         z += step
     }
-    console.log(`LENGTH: ${ntArray.length}`)
     return ntArray
 }
 
@@ -144,7 +155,7 @@ function myFunc(p) {
         array[index] = item * index / 40
     })
     const fValue = 7242 * pn/tn - 2 * integralByDots(ntArray)
-    console.log(fValue)
+    console.log(`func value(${p}) = ${fValue}`)
     return fValue
 }
 
@@ -155,7 +166,6 @@ function halfDivision(a, b, eps, f) {
         a = b
         b = t
     }
-    console.log(a, b)
     if (f(a) * f(b) > 0) {
         alert('no root on this interval')
         return
@@ -188,7 +198,6 @@ function integral(a, b, f){
     let I = 0
     const Nsteps = 40
     const step = (b - a) / Nsteps
-    console.log(step)
 
     for (let i = a; i < b; i += step) {
         I = I + ((i + step - i) / 6 * (f(i) + 4 * f((i + i + step)/2) + f(i + step)))
@@ -196,16 +205,10 @@ function integral(a, b, f){
     return I
 }
 
-// console.log('hello')
-// const result = halfDivision(3, 25, 0.0001, myFunc)
-// console.log(`result: f(${result}) = ${myFunc(result)}`)
-
-
-// let matrix = [[4, 5, 9], [7, 8, -1], [9, 8, 1]]
-// let array = [1, 2, 8]
-// console.log(solveSLAY(matrix, array))
-
 function solveSLAY(matrix, array) {
+    // console.log(matrix)
+    // console.log(array)
+
     const length = matrix.length
     let deltasRES = new Array(length).fill(0)
     for (let i = 0; i < length; i ++)
@@ -238,8 +241,6 @@ function solveSLAY(matrix, array) {
             array[k] -= coef * array[i]
         }
     }
-    console.log(matrix)
-    console.log(array)
     for (let i = length - 1; i >= 0; i--) {
         for (let j = length - 1; j > i; j--) {
             array[i] -= deltasRES[j] * matrix[i][j]
@@ -267,3 +268,6 @@ function solveSLAY(matrix, array) {
 // значение Г ищется методом дихотомии на интервале от 0 до 3 (начальное значения Г равно 0)
 //
 // полученные значения концентраций возврашаем в nt, где их складываем и возвращаем как значение функции
+
+const result = halfDivision(3, 25, 0.0001, myFunc)
+console.log(`result: f(${result}) = ${myFunc(result)}`)

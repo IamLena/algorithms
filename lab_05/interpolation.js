@@ -92,6 +92,5 @@ const calculate = (x, koefs, xValues) => {
         y += (koefs[i] * mult)
     }
 
-    console.log(`y(${x}) = ${y}`)
     return y
 }
