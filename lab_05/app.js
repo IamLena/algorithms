@@ -85,8 +85,15 @@ function calcK(i, T) {
 }
 
 function findQ(i, T) {
+    let xValues = Q[0].slice()
+    let yValues = Q[i].slice()
+    let x = T
 
+    let y = interpolation(xValues, yValues, x)
+    return y
 }
+
+
 
 function deltaE(i) {
 
