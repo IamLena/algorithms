@@ -1,6 +1,6 @@
 // ввод
-const t0 = 6000
-const tw = 25000
+const t0 = 9000
+const tw = 19000
 const m = 1
 
 // начальные
@@ -37,15 +37,17 @@ let alpha = 0
 let gamma = 0
 
 function nt(P, T) {
-    calcConcentration(P, T)
-    const sum = n1 + n2 + n3 + n4 + n5
     console.log('concentrations:')
     console.log(n1, n2, n3, n4, n5)
+    calcConcentration(P, T)
+    console.log(n1, n2, n3, n4, n5)
+    const sum = n1 + n2 + n3 + n4 + n5
     return Math.pow(sum, -18)
     //     return 7242 * P / T
 }
 
 function calcConcentration(P, T) {
+    console.log(`P=${P}, T = ${T}`)
     let deltas
 
     do {
@@ -151,9 +153,12 @@ function integralByDots(ntArray) {
 
 function myFunc(p) {
     ntArray = formNtArray(p)
+    console.log('ntArray')
+    console.log(ntArray)
     ntArray.forEach((item, index, array) => {
         array[index] = item * index / 40
     })
+    console.log(integralByDots(ntArray))
     const fValue = 7242 * pn/tn - 2 * integralByDots(ntArray)
     console.log(`func value(${p}) = ${fValue}`)
     return fValue
@@ -206,8 +211,8 @@ function integral(a, b, f){
 }
 
 function solveSLAY(matrix, array) {
-    // console.log(matrix)
-    // console.log(array)
+    console.log(matrix)
+    console.log(array)
 
     const length = matrix.length
     let deltasRES = new Array(length).fill(0)
