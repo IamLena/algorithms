@@ -26,10 +26,10 @@ for (let i = 0; i < length; i++) {
     const d1 = oneSideDifference(i)
     const d2 = edgesDif(i)
     const d3 = CentralDif(i)
-    const d4 = 4
+    const d4 = CenterRunge(i)
     const d5 = 5
     
-    printLine(x, y.toFixed(5), d1, d2, d3, d4.toFixed(5), d5.toFixed(5), d6.toFixed(5))
+    printLine(x, y.toFixed(5), d1, d2, d3, d4, d5.toFixed(5), d6.toFixed(5))
 }
 proc1 = (proc1 / (length - 1)).toFixed(2)
 proc1 = `${proc1}%`
@@ -39,7 +39,10 @@ proc2 = `${proc2}%`
 
 proc3 = (proc3 / (length - 2)).toFixed(2)
 proc3 = `${proc3}%`
-printLine('', '', proc1, proc2, proc3, proc4 / length, proc5 / length, '100%')
+
+proc4 = (proc4 / (length - 4)).toFixed(2)
+proc4 = `${proc4}%`
+printLine('', '', proc1, proc2, proc3, proc4, proc5 / length, '100%')
 
 
 function yFunc(x) {
@@ -107,6 +110,23 @@ function CentralDif(index) {
         let dif = (yValues[index + 1] - yValues[index - 1]) / 2 / step
         let precision = Math.abs(yExact[index] - dif) / yExact[index] * 100
         proc3 += precision
+        dif = dif.toFixed(5)
+        precision = Math.round(precision)
+        return `${dif}  (${precision}%)`
+    }
+    return '-'
+}
+
+function CenterRunge(index) {
+    if (length < 5) {return '-'}
+    if (index != 0 && index != 1 && index != length - 1 && index != length - 2) {
+        let dif1step = (yValues[index + 1] - yValues[index - 1]) / 2 / step
+        let dif2step = (yValues[index + 2] - yValues[index - 2]) / 4 / step
+        let dif = dif1step + (dif1step - dif2step) / 3
+        console.log(dif1step, dif2step, dif)
+
+        let precision = Math.abs(yExact[index] - dif) / yExact[index] * 100
+        proc4 += precision
         dif = dif.toFixed(5)
         precision = Math.round(precision)
         return `${dif}  (${precision}%)`
