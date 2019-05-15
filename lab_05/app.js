@@ -1,6 +1,6 @@
 // ввод
-const t0 = 9000
-const tw = 19000
+const t0 = 10000
+const tw = 10000
 const m = 1
 
 // начальные
@@ -33,21 +33,23 @@ let n4 = Math.exp(x4)
 let n5 = Math.exp(x5)
 let ne = Math.exp(v)
 
-let alpha = 0
+// let alpha = 0
 let gamma = 0
 
 function nt(P, T) {
-    console.log('concentrations:')
-    console.log(n1, n2, n3, n4, n5)
+    console.log(P, T)
+    // console.log('concentrations:')
+    // console.log(n1, n2, n3, n4, n5)
     calcConcentration(P, T)
     console.log(n1, n2, n3, n4, n5)
     const sum = n1 + n2 + n3 + n4 + n5
-    return Math.pow(sum, -18)
+    return sum
+    // return Math.pow(sum, -18)
     //     return 7242 * P / T
 }
 
 function calcConcentration(P, T) {
-    console.log(`P=${P}, T = ${T}`)
+    // console.log(`P=${P}, T = ${T}`)
     let deltas
 
     do {
@@ -67,6 +69,7 @@ function calcConcentration(P, T) {
             -7242 * P / T + ne + n1 + n2 + n3 + n4 + n5 - calcAlpha(gamma, T)
         ]
         deltas = solveSLAY(matrix, array)
+        // console.log(deltas)
         v += deltas[0]
         x1 += deltas[1]
         x2 += deltas[2]
@@ -82,20 +85,24 @@ function calcConcentration(P, T) {
         ne = Math.exp(v)
 
         gamma = halfDivision(0, 3, 0.0001, gammaFunc)
+        
     } while (
         Math.abs(deltas[0]/v) < eps && 
         Math.abs(deltas[1]/x1) < eps &&
         Math.abs(deltas[2]/x2) < eps &&
         Math.abs(deltas[3]/x3) < eps &&
         Math.abs(deltas[4]/x4) < eps &&
-        Math.abs(deltas[5]/x5) < eps)
+        Math.abs(deltas[5]/x5) < eps
+    )
 }
 
 function calcAlpha(gamma, T) {
     return 0.285 * Math.pow(10, -11) * Math.pow((gamma * T), 3)
 }
 function calcK(i, T) {
-    return 4.83 * Math.pow(10, -3) * findQ(i + 1, T)/findQ(i, T) * Math.pow(T, 3/2) * Math.exp(-(E[i - 1] - deltaE(i, T)) * 11604/T)
+    let k = 4.83 * Math.pow(10, -3) * findQ(i + 1, T)/findQ(i, T) * Math.pow(T, 3/2)* Math.exp(-(E[i - 1] - deltaE(i, T)) * 11603/T)
+    //console.log(`k = ${k}`)
+    return k
 }
 
 function findQ(i, T) {
@@ -133,6 +140,7 @@ function formNtArray(P) {
         ntArray.push(nt(P, curT))
         z += step
     }
+    console.log(ntArray)
     return ntArray
 }
 
@@ -153,14 +161,14 @@ function integralByDots(ntArray) {
 
 function myFunc(p) {
     ntArray = formNtArray(p)
-    console.log('ntArray')
-    console.log(ntArray)
+    // console.log('ntArray')
+    // console.log(ntArray)
     ntArray.forEach((item, index, array) => {
         array[index] = item * index / 40
     })
-    console.log(integralByDots(ntArray))
+    // console.log(integralByDots(ntArray))
     const fValue = 7242 * pn/tn - 2 * integralByDots(ntArray)
-    console.log(`func value(${p}) = ${fValue}`)
+    //console.log(`func value(${p}) = ${fValue}`)
     return fValue
 }
 
@@ -211,8 +219,8 @@ function integral(a, b, f){
 }
 
 function solveSLAY(matrix, array) {
-    console.log(matrix)
-    console.log(array)
+    // console.log(matrix)
+    // console.log(array)
 
     const length = matrix.length
     let deltasRES = new Array(length).fill(0)
@@ -253,6 +261,103 @@ function solveSLAY(matrix, array) {
         deltasRES[i] = array[i] / matrix[i][i]
     }
     return deltasRES
+}
+
+function interpolation(xValues, yValues, x) {
+    const n = 2
+    const index = findXIndex(x, xValues);
+    let values = getRange(n, xValues, yValues, index);
+    const xRange = values.x;
+    let yRange = values.y;
+    const koefs = getKoefs(xRange, yRange);
+    const y = calculate(x, koefs, xRange);
+    return y
+}
+
+const findXIndex = (x, xValues) => {
+    const length = xValues.length
+    // less than any value
+    if (x < xValues[0]) {
+        console.log('extrapolation')
+        alert('extropolation')
+        //returning first index - 1 = -1
+        return -1
+    }
+    // finding A[i] <= x <= A[i+1]
+    // if success result is A[i]
+    for (let i = 0; i < length - 1; i++) {
+        if (xValues[i] == x) {return i}
+        if (xValues[i+1] == x) {return i+1}
+        if (xValues[i] < x && x < xValues[i + 1]) {
+            return i + 1
+        }
+    }
+    //if it is the last value
+    if (x === xValues[length - 1]) {
+        return length - 1
+    }
+    // else x is greater than any value, returning last index + 1
+    console.log('extrapolation')
+    alert('extropolation')
+    return length
+    //extrapolation is just by printing it
+}
+
+// getting the configuration aroud x for solving
+const getRange = (n, xValues, yValues, index) => {
+    const rangeLength = n + 1
+    //the first n+1 values
+    if (index <= (rangeLength) / 2) {
+        return {
+            x: xValues.slice(0, rangeLength),
+            y: yValues.slice(0, rangeLength)
+        }
+    }
+    // the n+1 values from the end
+    if (index >= xValues.length - rangeLength) {
+        return {
+            x: xValues.slice(-rangeLength),
+            y: yValues.slice(-rangeLength)
+        }
+    }
+    // a slice in the middle
+    const indexFrom = index - Math.ceil(rangeLength / 2)
+    const indexTo = index + Math.floor(rangeLength / 2)
+    return {
+        x: xValues.slice(indexFrom, indexTo),
+        y: yValues.slice(indexFrom, indexTo)
+    }
+}
+
+const getKoefs = (xValues, yValues) => {
+    const koefs = []
+    koefs.push(yValues[0])
+    let len = 2
+    for (let j = xValues.length - 1; j > 0; j--) {
+        for (let i = 0; i < j; i++) {
+            yValues[i] = (yValues[i] - yValues[i + 1]) / (xValues[i] - xValues[i + len - 1])
+        }
+        koefs.push(yValues[0])
+        len++
+    }
+    return koefs
+}
+
+const calculate = (x, koefs, xValues) => {
+    const length = koefs.length
+    let n = 0
+    let y = 0
+    for (let i = 0; i < length; i++) {
+        let mult = 1
+        for (let j = 0; j < n; j++) {
+            mult *= (x - xValues[j])
+        }
+        n++
+        //console.log(`+y = ${koefs[i]} * ${mult} = ${koefs[i] * mult}`)
+        y += (koefs[i] * mult)
+    }
+
+    return y
 }
 
 // заупстить дихотомию по большой функции, для пойска значения Р при котором функци я равна нулю
