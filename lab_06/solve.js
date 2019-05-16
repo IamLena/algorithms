@@ -118,13 +118,13 @@ const runProg = function(a0, a1, a2, xb, xe, step) {
         ctx.lineTo(500, 400/2)
         ctx.stroke()
 
-        const k = 100
+        const k = 50
 
         ctx.beginPath();
         ctx.strokeStyle = 'red'
         ctx.stroke()
         ctx.moveTo(scaleX(xe, k), scaleY(func(xe), k))
-        for (let x = xb; x <= xe; x += step / 5) {
+        for (let x = xb; x <= xe; x += 0.2) {
             console.log(scaleX(x, k), scaleY(func(x), k))
             ctx.lineTo(scaleX(x, k), scaleY(func(x), k))
             
@@ -156,13 +156,13 @@ const runProg = function(a0, a1, a2, xb, xe, step) {
         ctx.lineTo(500, 400/2)
         ctx.stroke()
 
-        const k = 100
+        const k = 50
 
         ctx.beginPath();
         ctx.strokeStyle = 'red'
         ctx.stroke()
         ctx.moveTo(scaleX(xe, k), scaleY(funcDif(xe), k))
-        for (let x = xb; x <= xe; x += step / 5) {
+        for (let x = xb; x <= xe; x += 0.2) {
             console.log(scaleX(x, k), scaleY(funcDif(x), k))
             ctx.lineTo(scaleX(x, k), scaleY(funcDif(x), k))
         }
