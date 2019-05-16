@@ -5,9 +5,35 @@
         <title>lab_06</title>
         <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="style.css"> 
+        <script src = "funcs.js"></script>
     </head>
     <body>
-        <table class="table table-striped">
+      <h2>Дифференциирование функции y(x) = a0 * x / (a1 + a2 * x)</h2>
+      <form>
+        <label>
+          а0:
+          <input name='a0' value='1'>
+        </label>
+        <label>
+          а1:
+          <input name='a1' value='2'>
+        </label>
+        <label>
+          а2:
+          <input name='a2' value='3'>
+        </label>
+        <label>
+          x начальное:
+          <input name='xb' value='-5'>
+        </label>
+        <label>
+          x конечное:
+          <input name='xe' value='5'>
+        </label>
+        <button class="btn btn-warning btn-lg">рассчитать</button>
+      </form>
+        <!-- class="table table-striped" -->
+        <table >
             <thead>
               <tr>
                 <th scope="col">x</th>
@@ -15,7 +41,7 @@
                 <th scope="col">односторонняя разность (первый порядок точности)</th>
                 <th scope="col">в крайних узлах (второй порядок точности)</th>
                 <th scope="col">центральная разность (второй порядок точности)</th>
-                <th scope="col">2ая формула Рунге (третий порядок точности)</th>
+                <th scope="col">2ая формула Рунге</th>
                 <th scope="col">выравнивающие переменные</th>
                 <th scope="col">точное</th>
               </tr>
@@ -28,6 +54,7 @@
               </tr> -->
             </tbody>
           </table>
-          <script src = "app.js"></script>
+          <!-- <script src = "app.js"></script> -->
+          <script src = "solve.js"></script>
     </body>
 </html>

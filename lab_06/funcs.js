@@ -24,8 +24,15 @@ function Runge(func, x, step, method, stepKoef, precision) {
     return dif1 + (dif1 - dif2) / (Math.pow(stepKoef, precision) - 1)
 }
 
-function alineVars_dif(func, x, step, method) {
+function alineVars_dif(func, a0, a1, x) {
     const ksi = function(x) {return 1 / x}
     const etta = function(y) {return 1 / y}
-    return method(ksi, x, step) / method(etta, func(x), step) * maethod(etta, ksi(x),step)
+    const ksiDifX = function(x) {return - 1 / x / x}
+    const ettaDifY = function(y) {return -1 / y / y}
+    const ettaDifKsi = function(ksi) {return a1 / a0}
+    return ksiDifX(x) / ettaDifY(func(x)) * ettaDifKsi()
+}
+
+function calcPrecision(ideal, cur) {
+    return Math.round(Math.abs(ideal - cur) / ideal * 100)
 }
