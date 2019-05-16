@@ -43,3 +43,13 @@ table {
     background-color: rgb(76, 91, 175);
     color: white;
   }
+
+canvas {
+    border: 2px solid black;
+    margin: 20px;
+}
+
+#graph {
+    width: 1100px;
+    margin: auto;
+}
