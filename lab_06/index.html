@@ -24,11 +24,11 @@
         </label>
         <label>
           x начальное:
-          <input name='xb' value='-5'>
+          <input name='xb' value='1'>
         </label>
         <label>
           x конечное:
-          <input name='xe' value='5'>
+          <input name='xe' value='10'>
         </label>
         <label>
             шаг:
@@ -41,10 +41,10 @@
               <tr>
                 <th scope="col">x</th>
                 <th scope="col">y</th>
-                <th scope="col">односторонняя разность (первый порядок точности)</th>
-                <th scope="col">в крайних узлах (второй порядок точности)</th>
-                <th scope="col">центральная разность (второй порядок точности)</th>
-                <th scope="col">2ая формула Рунге</th>
+                <th scope="col">односторонняя разность (правосторонняя)</th>
+                <th scope="col">в крайних узлах</th>
+                <th scope="col">центральная разность</th>
+                <th scope="col">формула Рунге (правосторонняя)</th>
                 <th scope="col">выравнивающие переменные</th>
                 <th scope="col">точное</th>
               </tr>
@@ -52,10 +52,10 @@
             <tbody id="tableBody">
             </tbody>
           </table>
-          <div id='graph'>
+          <!-- <div id='graph'>
             <canvas width = "500" height = "400" id="canvas1"></canvas>
             <canvas width = "500" height = "400" id="canvas2"></canvas>
-          </div>
+          </div> -->
           <!-- <script src = "app.js"></script> -->
           <script src = "solve.js"></script>
     </body>
