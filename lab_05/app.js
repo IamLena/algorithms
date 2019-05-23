@@ -5,9 +5,9 @@ const m = 1
 
 // начальные
 const eps = 0.0001
-const pn = 15
-const tn = 10000
-let v = -1, x1 = 2, x2 = -1, x3 = -10, x4 = -25, x5 = -25
+const pn = 0.5
+const tn = 300
+let v = -1, x1 = 2, x2 = -1, x3 = -2, x4 = -25, x5 = -25
 
 // const
 const E = [12.13, 20.98, 31.00, 45.00]
@@ -37,11 +37,8 @@ let ne = Math.exp(v)
 let gamma = 0
 
 function nt(P, T) {
-    console.log(P, T)
-    // console.log('concentrations:')
-    // console.log(n1, n2, n3, n4, n5)
+    //console.log(P, T)
     calcConcentration(P, T)
-    console.log(n1, n2, n3, n4, n5)
     const sum = n1 + n2 + n3 + n4 + n5
     return sum
     // return Math.pow(sum, -18)
@@ -87,12 +84,12 @@ function calcConcentration(P, T) {
         gamma = halfDivision(0, 3, 0.0001, gammaFunc)
         
     } while (
-        Math.abs(deltas[0]/v) < eps && 
-        Math.abs(deltas[1]/x1) < eps &&
-        Math.abs(deltas[2]/x2) < eps &&
-        Math.abs(deltas[3]/x3) < eps &&
-        Math.abs(deltas[4]/x4) < eps &&
-        Math.abs(deltas[5]/x5) < eps
+        Math.abs(deltas[0]/v) >= eps && 
+        Math.abs(deltas[1]/x1) >= eps &&
+        Math.abs(deltas[2]/x2) >= eps &&
+        Math.abs(deltas[3]/x3) >= eps &&
+        Math.abs(deltas[4]/x4) >= eps &&
+        Math.abs(deltas[5]/x5) >= eps
     )
 }
 
@@ -140,7 +137,7 @@ function formNtArray(P) {
         ntArray.push(nt(P, curT))
         z += step
     }
-    console.log(ntArray)
+    //console.log(ntArray)
     return ntArray
 }
 
@@ -160,9 +157,9 @@ function integralByDots(ntArray) {
 }
 
 function myFunc(p) {
+    // console.log('concentrations:')
+    // console.log(n1, n2, n3, n4, n5)
     ntArray = formNtArray(p)
-    // console.log('ntArray')
-    // console.log(ntArray)
     ntArray.forEach((item, index, array) => {
         array[index] = item * index / 40
     })
@@ -179,22 +176,29 @@ function halfDivision(a, b, eps, f) {
         a = b
         b = t
     }
-    if (f(a) * f(b) > 0) {
+    let fa = f(a)
+    let fb = f(b)
+    if (fa * fb > 0) {
         alert('no root on this interval')
         return
     }
-    if (Math.abs(f(a)) < eps) {return a}
-    if (Math.abs(f(b)) < eps) {return b}
+    if (Math.abs(fa) < eps) {return a}
+    if (Math.abs(fb) < eps) {return b}
     let rootValue = (a + b) / 2
-    while (Math.abs(f(rootValue)) > eps) {
-        console.log(`(${a}, ${b}) f(${rootValue}) = ${f(rootValue)}`)
-        if (f(a) * f(rootValue) < 0) {
+    let f_value = f(rootValue)
+    while (Math.abs(f_value) > eps) {
+        console.log(`(${a}, ${b}) f(${rootValue}) = ${f_value}`)
+        if (f(a) * f_value < 0) {
             b = rootValue
         }
-        else {
+        else if (f(b) * f_value < 0){
             a = rootValue
         }
+        else {
+            return rootValue
+        }
         rootValue = (a + b) / 2
+        f_value = f(rootValue)
     }
     return rootValue
 }
@@ -360,13 +364,13 @@ const calculate = (x, koefs, xValues) => {
     return y
 }
 
-// заупстить дихотомию по большой функции, для пойска значения Р при котором функци я равна нулю
+// заупстить дихотомию по большой функции, для пойска значения Р при котором функция равна нулю
 // дихотомия на каждом шага уточняет значение Р и расчитывает функцию при данном Р
 // чтобы найти значение функции надо посчитать интеграл по z от 0 до 1 функции Nt*z
 // функция nt в результате представленна массивом из 41 элемента
 // массив формируется для одного P и 41 значения Т (от t0 до tw), которое зависит от z (изменется от 0 до 1 с шагом 1/40)
 // 
-// nt - сумма концентраций атом и ионов n1 + n2 + n3 + n4 + n5
+// nt - сумма концентраций атомов и ионов n1 + n2 + n3 + n4 + n5
 // для нахождения концентрации решается система нелинейных уравнений
 // система нелинейных уравнений сводится к слау, решением которой является приращение (dv, dx1, dx2, dx3, dx4, dx5)
 // для натурального логарифма концентраций (v, x1, x2, x3, x4, x5)
