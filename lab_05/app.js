@@ -37,16 +37,12 @@ let ne = Math.exp(v)
 let gamma = 0
 
 function nt(P, T) {
-    //console.log(P, T)
     calcConcentration(P, T)
     const sum = n1 + n2 + n3 + n4 + n5
     return sum
-    // return Math.pow(sum, -18)
-    //     return 7242 * P / T
 }
 
 function calcConcentration(P, T) {
-    // console.log(`P=${P}, T = ${T}`)
     let deltas
 
     do {
@@ -66,7 +62,6 @@ function calcConcentration(P, T) {
             -7242 * P / T + ne + n1 + n2 + n3 + n4 + n5 - calcAlpha(gamma, T)
         ]
         deltas = solveSLAY(matrix, array)
-        // console.log(deltas)
         v += deltas[0]
         x1 += deltas[1]
         x2 += deltas[2]
@@ -98,7 +93,6 @@ function calcAlpha(gamma, T) {
 }
 function calcK(i, T) {
     let k = 4.83 * Math.pow(10, -3) * findQ(i + 1, T)/findQ(i, T) * Math.pow(T, 3/2)* Math.exp(-(E[i - 1] - deltaE(i, T)) * 11603/T)
-    //console.log(`k = ${k}`)
     return k
 }
 
@@ -137,7 +131,6 @@ function formNtArray(P) {
         ntArray.push(nt(P, curT))
         z += step
     }
-    //console.log(ntArray)
     return ntArray
 }
 
@@ -163,9 +156,7 @@ function myFunc(p) {
     ntArray.forEach((item, index, array) => {
         array[index] = item * index / 40
     })
-    // console.log(integralByDots(ntArray))
     const fValue = 7242 * pn/tn - 2 * integralByDots(ntArray)
-    //console.log(`func value(${p}) = ${fValue}`)
     return fValue
 }
 
@@ -223,9 +214,6 @@ function integral(a, b, f){
 }
 
 function solveSLAY(matrix, array) {
-    // console.log(matrix)
-    // console.log(array)
-
     const length = matrix.length
     let deltasRES = new Array(length).fill(0)
     for (let i = 0; i < length; i ++)
@@ -357,7 +345,6 @@ const calculate = (x, koefs, xValues) => {
             mult *= (x - xValues[j])
         }
         n++
-        //console.log(`+y = ${koefs[i]} * ${mult} = ${koefs[i] * mult}`)
         y += (koefs[i] * mult)
     }
 
