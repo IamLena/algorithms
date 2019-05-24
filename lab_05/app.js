@@ -1,7 +1,7 @@
 // ввод
-const t0 = 3000
+const t0 = 10000
 const tw = 3000
-const m = 1
+const m = 48
 
 // начальные
 const eps = 0.0001
@@ -178,6 +178,7 @@ function halfDivision(a, b, eps, f) {
     let rootValue = (a + b) / 2
     let f_value = f(rootValue)
     while (Math.abs(f_value) > eps) {
+        console.log(`fa = ${fa}, fb = ${fb}`)
         console.log(`(${a}, ${b}) f(${rootValue}) = ${f_value}`)
         if (f(a) * f_value < 0) {
             b = rootValue
@@ -374,3 +375,4 @@ const calculate = (x, koefs, xValues) => {
 console.log(`Pn = ${pn}; tn = ${t0}; tw = ${tw}`)
 const result = halfDivision(3, 25, 0.0001, myFunc)
 console.log(`result: f(${result}) = ${myFunc(result)}`)
+console.log(ne, n1, n2, n3, n4, n5, gamma)
