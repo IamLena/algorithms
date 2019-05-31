@@ -46,7 +46,6 @@ function T(z) {
 }
 
 function nt(P, T) {
-    console.log(`nt P = ${P}, T = ${T}`)
     let n = calcConcentration(P, T)
     const sum = n[1] + n[2] + n[3] + n[4] + n[5]
     return sum
@@ -57,14 +56,16 @@ function calcConcentration(P, T) {
     let v_x = [-1, 2, -1, -2, -25, -35] //v, x1, x2, x3, x4, x5
     let n = [0, 0, 0, 0, 0, 0] // ne, n1, n2, n3, n4, n5
     let deltas = [0, 0, 0, 0, 0, 0]
-
-    let matrix = [
-        [1, -1, 1, 0, 0, 0],
-        [1, 0, -1, 1, 0, 0],
-        [1, 0, 0, -1, 1, 0],
-        [1, 0, 0, 0, -1, 1], [], []]
         
     do {
+        let matrix = [
+            [1, -1, 1, 0, 0, 0],
+            [1, 0, -1, 1, 0, 0],
+            [1, 0, 0, -1, 1, 0],
+            [1, 0, 0, 0, -1, 1], 
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0]]
+
         //calculates v_x += deltas and n = exp(v_x)
         v_x.forEach((item, index, array) => {
             let new_value = item + deltas[index]
@@ -74,14 +75,14 @@ function calcConcentration(P, T) {
 
         //add two last rows to matrix
         for (let i = 0; i < 6; i++) {
-            matrix[4].push(-n[i] * zaryd[i])
-            matrix[5].push(-n[i])
+            matrix[4][i] = -n[i] * zaryd[i]
+            matrix[5][i] = -n[i]
         }
 
-        let array = []
+        let array = Array(6).fill(0)
         //first four elements
         for (let i = 1; i < 5; i++) {
-            array.push(-v_x[0] - v_x[i + 1] + v_x[i] + calcLnK(i, T, gamma))
+            array[i - 1] = -v_x[0] - v_x[i + 1] + v_x[i] + calcLnK(i, T, gamma)
         }
 
         let sumRow5 = 0
@@ -90,9 +91,9 @@ function calcConcentration(P, T) {
             sumRow5 += zaryd[i] * n[i]
             sumRow6 += n[i]
         }
-        array.push(sumRow5)
+        array[4] = sumRow5
         let row6 = -7242 * P / T  + sumRow6 - calcAlpha(gamma, T)
-        array.push(row6)
+        array[5] = row6
 
         deltas = solveSLAY(matrix, array)
 
@@ -164,8 +165,6 @@ function halfDivision(a, b, eps, f) {
     let rootValue = (a + b) / 2
     let f_value = f(rootValue)
     while (Math.abs(f_value) > eps) {
-        // console.log(`fa = ${fa}, fb = ${fb}`)
-        // console.log(`(${a}, ${b}) f(${rootValue}) = ${f_value}`)
         if (fa * f_value < 0) {
             b = rootValue
             fb = f_value
@@ -184,8 +183,6 @@ function halfDivision(a, b, eps, f) {
 }
 
 function integralByDots(ntArray) {
-    console.log('ntarray')
-    console.log(ntArray)
     let I = ntArray[0]
     const Nsteps = 40
     const step = 1 / Nsteps
@@ -195,8 +192,6 @@ function integralByDots(ntArray) {
         else {I += 2 * ntArray[i]}
     }
     I += ntArray[Nsteps]
-    console.log('integral')
-    console.log(I * step / 3)
     return I * step / 3
 }
 
@@ -225,8 +220,9 @@ function solveSLAY(matrix, array) {
             array[i] = tmp
         }
         
+        let diagonalEL = matrix[i][i]
         for (let k = i + 1; k < length; k++) {
-            const coef = matrix[k][i] / maxEl
+            const coef = matrix[k][i] / diagonalEL
             for (let j = i; j < length; j++) {
                 matrix[k][j] -= coef * matrix[i][j]
             }
@@ -339,4 +335,6 @@ const calculate = (x, koefs, xValues) => {
     return y
 }
 
-console.log(myFunc(17))
+const result = halfDivision(3, 25, eps, myFunc)
+const value = myFunc(result)
+console.log(`f(${result}) = ${value}`)
