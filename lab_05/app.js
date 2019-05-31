@@ -7,7 +7,7 @@ const m = 48
 const eps = 0.0001
 const pn = 0.5
 const tn = 300
-let v = -1, x1 = 2, x2 = -1, x3 = -2, x4 = -25, x5 = -25
+let v = -1, x1 = 2, x2 = -1, x3 = -2, x4 = -25, x5 = -35
 
 // const
 const E = [12.13, 20.98, 31.00, 45.00]
@@ -139,6 +139,8 @@ function T(t0, tw, z, m) {
 }
 
 function integralByDots(ntArray) {
+    console.log('ntarray')
+    console.log(ntArray)
     let I = 0
     const Nsteps = 40
     const step = 1 / Nsteps
@@ -146,6 +148,8 @@ function integralByDots(ntArray) {
     for (let i = 1; i < Nsteps; i += 2) {
         I += (ntArray[i - 1] + 4 * ntArray[i] + ntArray[i + 1])
     }
+    console.log('integral')
+    console.log(I * step / 3)
     return I * step / 3
 }
 
@@ -211,6 +215,7 @@ function integral(a, b, f){
     for (let i = a; i < b; i += step) {
         I = I + ((i + step - i) / 6 * (f(i) + 4 * f((i + i + step)/2) + f(i + step)))
     }
+    console.log(`I = ${I}`)
     return I
 }
 
@@ -372,7 +377,8 @@ const calculate = (x, koefs, xValues) => {
 //
 // полученные значения концентраций возврашаем в nt, где их складываем и возвращаем как значение функции
 
-console.log(`Pn = ${pn}; tn = ${t0}; tw = ${tw}`)
-const result = halfDivision(3, 25, 0.0001, myFunc)
+// console.log(`Pn = ${pn}; tn = ${t0}; tw = ${tw}`)
+// const result = halfDivision(3, 25, 0.0001, myFunc)
+let result = 17
 console.log(`result: f(${result}) = ${myFunc(result)}`)
-console.log(ne, n1, n2, n3, n4, n5, gamma)
+// console.log(ne, n1, n2, n3, n4, n5, gamma)
